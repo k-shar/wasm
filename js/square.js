@@ -4,16 +4,16 @@ const CANVAS_ID = "square";
 
 async function run() {
   await init();
-
-  const color = [1.0, 0.5, 0.9, 1.0];
+  const color = [0.0, 0.5, 0.9, 1.0];
   draw_square(CANVAS_ID, color);
 }
 
 run();
 
-const colorChangerForm = document.getElementById("color-changer");
-colorChangerForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+const colorChangerForm = document.getElementById("red");
+colorChangerForm.addEventListener("input", (e) => {
+  
+  console.log(e);
 
   const color = [
     clampRGBValue(e.target.elements.red.value),

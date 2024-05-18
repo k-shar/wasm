@@ -4,7 +4,7 @@ const CANVAS_ID = "triangle";
 
 async function run() {
   await init();
-
+  console.log("sWdfsdfasm module loaded");
   const color = [1.0, 0.5, 0.9, 1.0];
   draw_triangle(CANVAS_ID, color);
 }

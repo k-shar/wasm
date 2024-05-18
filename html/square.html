@@ -4,17 +4,15 @@
     <meta charset="UTF-8" />
     <title>WebGL with Rust + WebAssembly</title>
 
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
 
     <h1>Hello square!</h1>
     
     <canvas id="square" width="400" height="400"> </canvas>
-
-    <form id="color-changer">
       <input
-        type="number"
+        type="range"
         id="red"
         name="color"
         placeholder="Red"
@@ -23,7 +21,7 @@
         max="255"
       />
       <input
-        type="number"
+        type="range"
         id="green"
         name="color"
         placeholder="Green"
@@ -32,7 +30,7 @@
         max="255"
       />
       <input
-        type="number"
+        type="range"
         id="blue"
         name="color"
         placeholder="Blue"
@@ -40,8 +38,6 @@
         min="0"
         max="255"
       />
-      <input type="submit" value="Change color" />
-    </form>
 
     <script type="module" src="../../pkg/webassembly_webgl_viewer.js"></script>
     <script type="module" src="../js/square.js"></script>
