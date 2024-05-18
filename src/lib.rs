@@ -1,2 +1,3 @@
-pub mod triangle;
-pub mod square;
+mod triangle;
+mod square;
+mod utils;
