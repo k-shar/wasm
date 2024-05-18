@@ -10,7 +10,7 @@ async function run() {
 
 run();
 
-const colorChangerForm = document.getElementById("red");
+const colorChangerForm = document.getElementById("color-changer");
 colorChangerForm.addEventListener("input", (e) => {
   
   console.log(e);
