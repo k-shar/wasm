@@ -345,6 +345,9 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_bindBuffer_1e5043751efddd4f = function(arg0, arg1, arg2) {
         getObject(arg0).bindBuffer(arg1 >>> 0, getObject(arg2));
     };
+    imports.wbg.__wbg_clear_f9731a47df2e70d8 = function(arg0, arg1) {
+        getObject(arg0).clear(arg1 >>> 0);
+    };
     imports.wbg.__wbg_compileShader_3af4719dfdb508e3 = function(arg0, arg1) {
         getObject(arg0).compileShader(getObject(arg1));
     };

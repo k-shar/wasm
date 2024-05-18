@@ -136,10 +136,10 @@ pub fn draw_square(
     let shader_program: WebGlProgram = setup_shaders(&gl).unwrap();
 
     let vertices: [f32; 12] = [
-        0.0, 0.0, 0.0, // top
-        0.0, 1.0, 0.0, // bottom left
-        1.0, 0.0, 0.0, // bottom right
-        1.0, 1.0, 0.0, // bottom right
+        -0.5, -0.5, 0.0, // bottom left
+        0.5, -0.5, 0.0, // bottom right
+        -0.5, 0.5, 0.0, // top left
+        0.5, 0.5, 0.0, // top right
     ];
 
     setup_vertices(&gl, &vertices, &shader_program);
@@ -149,9 +149,10 @@ pub fn draw_square(
         .get_uniform_location(&shader_program, "fragColor")
         .unwrap();
     gl.uniform4fv_with_f32_array(Some(&color_location), &color);
-
+    
+    gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
     gl.draw_arrays(
-        WebGlRenderingContext::TRIANGLES,
+        WebGlRenderingContext::TRIANGLE_STRIP,
         0,
         (vertices.len() / 3) as i32,
     );

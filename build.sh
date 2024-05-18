@@ -1,2 +1,2 @@
-wasm-pack build --target web
-http -m wasm:application/wasm
+cargo watch -s "wasm-pack build --target web"
+

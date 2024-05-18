@@ -10,15 +10,15 @@ async function run() {
 
 run();
 
-const colorChangerForm = document.getElementById("red");
+const colorChangerForm = document.getElementById("color-changer");
 colorChangerForm.addEventListener("input", (e) => {
-  
-  console.log(e);
+
+  e.preventDefault();
 
   const color = [
-    clampRGBValue(e.target.elements.red.value),
-    clampRGBValue(e.target.elements.green.value),
-    clampRGBValue(e.target.elements.blue.value),
+    clampRGBValue(document.getElementById("red").value),
+    clampRGBValue(document.getElementById("green").value),
+    clampRGBValue(document.getElementById("blue").value),
     1.0,
   ];
 
