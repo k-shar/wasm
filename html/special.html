@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Square ?</title>
+
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+
+    <h1>Hello square!</h1>
+    
+    <canvas id="special" width="200" height="200"> </canvas>
+   
+    <form id="color-changer">
+      <div class="slider-container">
+        <label for="red">red</label>
+        <input type="range" id="red" min="0" max="255" />
+      </div>
+      <div class="slider-container">
+        <label for="green">green</label>
+        <input type="range" id="green" min="0" max="255" />
+      </div>
+      <div class="slider-container">
+        <label for="blue">blue</label>
+        <input type="range" id="blue" min="0" max="255" />
+      </div>
+    </form>
+
+    <script type="module" src="../../pkg/webassembly_webgl_viewer.js"></script>
+    <script type="module" src="../js/special.js"></script>
+  </body>
+</html>
