@@ -246,17 +246,39 @@ export function draw_square(canvas_id, selected_color) {
     }
 }
 
+function getArrayF32FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getFloat32Memory0().subarray(ptr / 4, ptr / 4 + len);
+}
+/**
+* @param {number} n
+* @returns {Float32Array}
+*/
+export function update_sides(n) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.update_sides(retptr, n);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var v1 = getArrayF32FromWasm0(r0, r1).slice();
+        wasm.__wbindgen_free(r0, r1 * 4, 4);
+        return v1;
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+}
+
 /**
 * @param {string} canvas_id
 * @param {number} i
 * @returns {WebGLRenderingContext}
 */
-export function special(canvas_id, i) {
+export function update_colors(canvas_id, i) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        wasm.special(retptr, ptr0, len0, i);
+        wasm.update_colors(retptr, ptr0, len0, i);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -267,11 +289,6 @@ export function special(canvas_id, i) {
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
-}
-
-function getArrayF32FromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return getFloat32Memory0().subarray(ptr / 4, ptr / 4 + len);
 }
 
 function handleError(f, args) {

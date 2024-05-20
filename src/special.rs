@@ -3,6 +3,7 @@ use web_sys::{WebGlRenderingContext, WebGlProgram};
 use palette::{Hsv, Srgb, FromColor};
 extern crate js_sys;
 
+use std::f64::consts::PI;
 use crate::utils::{init_webgl_context, create_shader};
 
 fn rainbow_chase(time: i32) -> Vec<f32> {
@@ -12,7 +13,20 @@ fn rainbow_chase(time: i32) -> Vec<f32> {
 }
 
 #[wasm_bindgen]
-pub fn special(
+pub fn update_sides(n: i32) -> Vec<f32> {
+    let vertices: Vec<f32> = (0..n)
+        .map(|k| {
+            let theta = 2.0 * PI * (k as f64) / (n as f64);
+            vec!(theta.cos() as f32, theta.sin() as f32)
+        }).into_iter().flat_map(|v| v).collect();
+
+    let r = web_sys::window().unwrap().document().unwrap().get_element_by_id("roots").unwrap();
+    r.set_inner_html(format!("{:?}", vertices).as_str());
+    vertices
+}
+
+#[wasm_bindgen]
+pub fn update_colors(
     canvas_id: &str,
     i: i32,
 ) -> Result<WebGlRenderingContext, JsValue> {
@@ -21,12 +35,8 @@ pub fn special(
     let gl: WebGlRenderingContext = init_webgl_context(canvas_id).unwrap();
     let shader_program: WebGlProgram = setup_shaders(&gl);
 
-    let vertices = [
-        -0.5, 0.5, // top left
-        -0.5, -0.5, // bottom left
-        0.5, -0.5, // bottom right
-        0.5, 0.5, // top right
-    ];
+    let vertices = update_sides(8);
+    
     setup_vertices(&gl, &vertices, &shader_program);
 
     // get a pointer to the uniform vec4 fragColor
@@ -44,15 +54,15 @@ pub fn special(
         (vertices.len() / 2) as i32,
     );
 
-    // log this to the user
-
-    let output= web_sys::window().unwrap().document().unwrap().get_element_by_id("output").unwrap();
-
-    let r = (color[0] * 255.0) as u8;
-    let g = (color[1] * 255.0) as u8;
-    let b = (color[2] * 255.0) as u8;
-
-    output.set_inner_html(format!("Red: {} Green: {}, Blue: {}", r, g, b).as_str());
+    // log the RGB valaues to the user
+    let output = web_sys::window().unwrap().document().unwrap().get_element_by_id("rgb_values").unwrap();
+    output.set_inner_html(format!(
+        "Red: {} Green: {}, Blue: {}",
+        (color[0] * 255.0) as u8, 
+        (color[1] * 255.0) as u8,
+        (color[2] * 255.0) as u8
+    ).as_str());
+    
     
     // return success
     Ok(gl)
