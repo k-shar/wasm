@@ -14,10 +14,10 @@ export function draw_triangle(canvas_id: string, selected_color?: Float32Array):
 export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
 /**
 * @param {string} canvas_id
-* @param {Float32Array | undefined} [selected_color]
+* @param {number} i
 * @returns {WebGLRenderingContext}
 */
-export function special(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
+export function special(canvas_id: string, i: number): WebGLRenderingContext;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -25,7 +25,7 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly special: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly special: (a: number, b: number, c: number, d: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;

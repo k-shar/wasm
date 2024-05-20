@@ -1,44 +1,60 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGlRenderingContext, WebGlProgram};
+use palette::{Hsv, Srgb, FromColor};
 extern crate js_sys;
 
 use crate::utils::{init_webgl_context, create_shader};
 
+fn rainbow_chase(time: i32) -> Vec<f32> {
+    let hsv_color = Hsv::new(time as f64, 1.0, 1.0);
+    let color: Srgb = Srgb::from_color(hsv_color).into();
+    vec![color.red, color.green, color.blue, 1.0]
+}
+
 #[wasm_bindgen]
 pub fn special(
     canvas_id: &str,
-    selected_color: Option<Vec<f32>>,
+    i: i32,
 ) -> Result<WebGlRenderingContext, JsValue> {
 
     // create gl context and shader program
     let gl: WebGlRenderingContext = init_webgl_context(canvas_id).unwrap();
     let shader_program: WebGlProgram = setup_shaders(&gl);
 
-    // define the vertices of the square
-    let vertices: [f32; 8] = [
-        -0.9, -0.9, // bottom left
-        0.9, -0.9, // bottom right
-        -0.9, 0.9, // top left
-        0.9, 0.9, // top right
+    let vertices = [
+        -0.5, 0.5, // top left
+        -0.5, -0.5, // bottom left
+        0.5, -0.5, // bottom right
+        0.5, 0.5, // top right
     ];
-
-    // bind the verticies to the buffer 
     setup_vertices(&gl, &vertices, &shader_program);
 
-    // set the color to shade these verticies
-    let color = selected_color.unwrap_or(vec![1.0, 0.0, 0.0, 1.0]);
-    let color_location = gl
-        .get_uniform_location(&shader_program, "fragColor")
-        .unwrap();
+    // get a pointer to the uniform vec4 fragColor
+    let color_location = gl.get_uniform_location(&shader_program, "fragColor").unwrap();
+
+    // set fragColo to our value
+    let color = rainbow_chase(i);
     gl.uniform4fv_with_f32_array(Some(&color_location), &color);
     
+    // draw on the screen
     gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
     gl.draw_arrays(
-        WebGlRenderingContext::TRIANGLE_STRIP,
+        WebGlRenderingContext::TRIANGLE_FAN,
         0,
         (vertices.len() / 2) as i32,
     );
 
+    // log this to the user
+
+    let output= web_sys::window().unwrap().document().unwrap().get_element_by_id("output").unwrap();
+
+    let r = (color[0] * 255.0) as u8;
+    let g = (color[1] * 255.0) as u8;
+    let b = (color[2] * 255.0) as u8;
+
+    output.set_inner_html(format!("Red: {} Green: {}, Blue: {}", r, g, b).as_str());
+    
+    // return success
     Ok(gl)
 }
 

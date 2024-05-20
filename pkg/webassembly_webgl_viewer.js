@@ -248,17 +248,15 @@ export function draw_square(canvas_id, selected_color) {
 
 /**
 * @param {string} canvas_id
-* @param {Float32Array | undefined} [selected_color]
+* @param {number} i
 * @returns {WebGLRenderingContext}
 */
-export function special(canvas_id, selected_color) {
+export function special(canvas_id, i) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        var ptr1 = isLikeNone(selected_color) ? 0 : passArrayF32ToWasm0(selected_color, wasm.__wbindgen_malloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.special(retptr, ptr0, len0, ptr1, len1);
+        wasm.special(retptr, ptr0, len0, i);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -347,6 +345,9 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_getElementById_c369ff43f0db99cf = function(arg0, arg1, arg2) {
         const ret = getObject(arg0).getElementById(getStringFromWasm0(arg1, arg2));
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
+    };
+    imports.wbg.__wbg_setinnerHTML_26d69b59e1af99c7 = function(arg0, arg1, arg2) {
+        getObject(arg0).innerHTML = getStringFromWasm0(arg1, arg2);
     };
     imports.wbg.__wbg_instanceof_WebGlRenderingContext_d48361eb1e636d9a = function(arg0) {
         let result;
