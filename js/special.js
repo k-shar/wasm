@@ -1,4 +1,4 @@
-import init, { update_colors, update_sides } from "../pkg/webassembly_webgl_viewer.js";
+import init, { draw, update_sides } from "../pkg/webassembly_webgl_viewer.js";
 
 const CANVAS_ID = "special";
 
@@ -11,7 +11,7 @@ async function run() {
   var i = 0;
   function loop() {
     i += 1;
-    update_colors(CANVAS_ID, i);
+    draw(CANVAS_ID, i);
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
@@ -21,7 +21,7 @@ async function run() {
 const shape_sides = document.getElementById("shape_sides");
 shape_sides.addEventListener("input", (e) => {
   e.preventDefault();
-  update_sides(CANVAS_ID, shape_sides.value);
+  update_sides(shape_sides.value);
 });
 
 run();
