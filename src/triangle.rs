@@ -2,7 +2,7 @@ use wasm_bindgen::prelude::*;
 use web_sys::{WebGlRenderingContext, WebGlProgram};
 extern crate js_sys;
 
-use crate::utils::{init_webgl_context, setup_shaders, setup_vertices};
+use crate::utils::{init_webgl_context, link_shaders, setup_vertices};
 
 #[wasm_bindgen]
 pub fn draw_triangle(
@@ -10,7 +10,24 @@ pub fn draw_triangle(
     selected_color: Option<Vec<f32>>,
 ) -> Result<WebGlRenderingContext, JsValue> {
     let gl: WebGlRenderingContext = init_webgl_context(canvas_id).unwrap();
-    let shader_program: WebGlProgram = setup_shaders(&gl).unwrap();
+
+    let vertex_shader_source = "
+        attribute vec3 coordinates;
+
+        void main(void) {
+            gl_Position = vec4(coordinates, 1.0);
+        }
+        ";
+    let fragment_shader_source = "
+        precision mediump float;
+
+        uniform vec4 fragColor;
+
+        void main(void) {
+            gl_FragColor = fragColor;
+        }
+        ";
+    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source).unwrap();
 
     let vertices: [f32; 9] = [
         0.0, 1.0, 0.0, // top

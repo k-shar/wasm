@@ -54,38 +54,15 @@ pub fn create_shader(
     }
 }
 
-// load the vertex and fragment shaders
-pub fn setup_shaders(gl: &WebGlRenderingContext) -> Result<WebGlProgram, JsValue> {
-    let vertex_shader_source = "
-        attribute vec3 coordinates;
+// generic helper function to link shaders
+pub fn link_shaders(
+    gl: &WebGlRenderingContext, 
+    vertex_shader_source: &str, 
+    fragment_shader_source: &str
+) -> Result<WebGlProgram, JsValue> {
 
-        void main(void) {
-            gl_Position = vec4(coordinates, 1.0);
-        }
-        ";
-
-    let fragment_shader_source = "
-        precision mediump float;
-
-        uniform vec4 fragColor;
-
-        void main(void) {
-            gl_FragColor = fragColor;
-        }
-        ";
-
-    // use helper function to load the shaders
-    let vertex_shader = create_shader( 
-        &gl,
-        WebGlRenderingContext::VERTEX_SHADER,
-        vertex_shader_source,
-    ).unwrap();
-
-    let fragment_shader = create_shader( 
-        &gl,
-        WebGlRenderingContext::FRAGMENT_SHADER,
-        fragment_shader_source,
-    ).unwrap();
+    let vertex_shader = create_shader(&gl, WebGlRenderingContext::VERTEX_SHADER, vertex_shader_source).unwrap();
+    let fragment_shader = create_shader(&gl, WebGlRenderingContext::FRAGMENT_SHADER, fragment_shader_source).unwrap();
 
     // link these shaders into a program
     let shader_program = gl.create_program().unwrap();
@@ -109,6 +86,7 @@ pub fn setup_shaders(gl: &WebGlRenderingContext) -> Result<WebGlProgram, JsValue
         ));
     }
 }
+
 
 pub fn setup_vertices(gl: &WebGlRenderingContext, vertices: &[f32], shader_program: &WebGlProgram) {
     let vertices_array = unsafe { js_sys::Float32Array::view(&vertices) };
