@@ -1,30 +1,35 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <title>special !</title>
-
     <link rel="stylesheet" href="../style.css" />
   </head>
-  <body>
 
-    <h1>special thing</h1>
-    
-    <canvas id="special" width="200" height="200"> </canvas>
-   
-    <div>
-      <h1 id="shape_sides_text">Number of sides: 10</h1>
-      <input type="range" id="shape_sides" min="3" max="20" value="10"></input>
-    </div>
+  <body style="margin: 0; padding: 0; height: 100%;">
 
-    <div>
-      <h1 id="rotation_speed_text">Rotation speed: 50%</h1>
-      <input type="range" id="rotation_speed" min="0" max="100" value="50"></input>
-    </div>
+    <div style="height: 100vh; display: flex; flex-direction: column;">
+
+      <h1>special thing</h1>
+      
+      <canvas id="special" width="200" height="200"> </canvas>
     
-    <h1 id="roots"></h1>
+      <div>
+        <h1 id="shape_sides_text">Number of sides: 10</h1>
+        <input type="range" id="shape_sides" min="3" max="20" value="10"></input>
+      </div>
+
+      <div>
+        <h1 id="rotation_speed_text">Rotation speed: 50%</h1>
+        <input type="range" id="rotation_speed" min="0" max="100" value="50"></input>
+      </div>
+    
+    </div>
 
     <script type="module" src="../pkg/webassembly_webgl_viewer.js"></script>
     <script type="module" src="../js/special.js"></script>
+
   </body>
 </html>
