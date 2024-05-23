@@ -256,8 +256,15 @@ export function update_sides(n) {
 /**
 * @param {number} s
 */
-export function update_speed(s) {
-    wasm.update_speed(s);
+export function update_rotation_speed(s) {
+    wasm.update_rotation_speed(s);
+}
+
+/**
+* @param {number} s
+*/
+export function update_colour_speed(s) {
+    wasm.update_colour_speed(s);
 }
 
 /**

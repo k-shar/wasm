@@ -12,6 +12,7 @@ struct STATE {
     vertices: Vec<f32>,
     time: i32,
     rotate_speed: i32,
+    colour_speed: i32,
 }
 
 // Initialize the state
@@ -20,6 +21,7 @@ thread_local! {
         vertices: get_coords_of_ngon(8),
         time: 0,
         rotate_speed: 50,
+        colour_speed: 50,
     });
 }
 
@@ -34,10 +36,19 @@ pub fn update_sides(n: i32) {
 
 // update the speed of the rotation
 #[wasm_bindgen]
-pub fn update_speed(s: i32) {
+pub fn update_rotation_speed(s: i32) {
     STATE.with(|state| {
         let mut state = state.borrow_mut();
         state.rotate_speed = s;
+    });
+}
+
+// update the speed of the rainbow chase
+#[wasm_bindgen]
+pub fn update_colour_speed(s: i32) {
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.colour_speed = s;
     });
 }
 
@@ -110,7 +121,7 @@ pub fn draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
         setup_vertices(&gl, &rotated_verts, &shader_program);
 
         // set fragment shader to colour the right color
-        let color = rainbow_chase(state.time);
+        let color = rainbow_chase(state.time * state.colour_speed / 50);
         let color_location = gl.get_uniform_location(&shader_program, "fragColor").unwrap();
         gl.uniform4fv_with_f32_array(Some(&color_location), &color);
         

@@ -10,23 +10,19 @@
 
   <body style="margin: 0; padding: 0; height: 100%;">
 
-    <div style="height: 100vh; display: flex; flex-direction: column;">
 
       <h1>special thing</h1>
       
-      <canvas id="special" width="200" height="200"> </canvas>
-    
-      <div>
-        <h1 id="shape_sides_text">Number of sides: 10</h1>
-        <input type="range" id="shape_sides" min="3" max="20" value="10"></input>
-      </div>
+      <canvas id="special" style="width: 60vw; height: 60vw;"> </canvas>
+  
+      <h1 id="shape_sides_text">sides: 10</h1>
+      <input style="width: 40vw;" type="range" id="shape_sides" min="3" max="20" value="6"></input>
 
-      <div>
-        <h1 id="rotation_speed_text">Rotation speed: 50%</h1>
-        <input type="range" id="rotation_speed" min="0" max="100" value="50"></input>
-      </div>
+      <h1 id="rotation_speed_text">rotation speed: 50%</h1>
+      <input style="width: 40vw;" type="range" id="rotation_speed" min="-50" max="100" value="50"></input>
     
-    </div>
+      <h1 id="colour_speed_text">colour speed: 50%</h1>
+      <input style="width: 40vw;" type="range" id="colour_speed" min="0" max="200" value="50"></input>
 
     <script type="module" src="../pkg/webassembly_webgl_viewer.js"></script>
     <script type="module" src="../js/special.js"></script>

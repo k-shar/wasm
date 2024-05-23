@@ -19,7 +19,11 @@ export function update_sides(n: number): void;
 /**
 * @param {number} s
 */
-export function update_speed(s: number): void;
+export function update_rotation_speed(s: number): void;
+/**
+* @param {number} s
+*/
+export function update_colour_speed(s: number): void;
 /**
 * @param {string} canvas_id
 * @returns {WebGLRenderingContext}
@@ -33,7 +37,8 @@ export interface InitOutput {
   readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly update_sides: (a: number) => void;
-  readonly update_speed: (a: number) => void;
+  readonly update_rotation_speed: (a: number) => void;
+  readonly update_colour_speed: (a: number) => void;
   readonly draw: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
