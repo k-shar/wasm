@@ -1,11 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function gradient_draw(canvas_id: string): WebGLRenderingContext;
-/**
 * @param {number} n
 */
 export function update_sides(n: number): void;
@@ -34,18 +29,28 @@ export function draw_triangle(canvas_id: string, selected_color?: Float32Array):
 * @returns {WebGLRenderingContext}
 */
 export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
+/**
+* @param {number} n
+*/
+export function g_update_sides(n: number): void;
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function gradient_draw(canvas_id: string): WebGLRenderingContext;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly gradient_draw: (a: number, b: number, c: number) => void;
   readonly update_sides: (a: number) => void;
   readonly update_rotation_speed: (a: number) => void;
   readonly update_colour_speed: (a: number) => void;
   readonly draw: (a: number, b: number, c: number) => void;
   readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly g_update_sides: (a: number) => void;
+  readonly gradient_draw: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;

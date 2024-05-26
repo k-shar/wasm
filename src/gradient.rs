@@ -33,6 +33,16 @@ thread_local! {
     });
 }
 
+// update number of sides on the shape we're displaying
+#[wasm_bindgen]
+pub fn g_update_sides(n: i32) {
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.vertices = get_coords_of_ngon(n);
+        state.side_count = n;
+    });
+}
+
 // generate the coordinates of an n-gon using roots of unity/ polar coords
 fn get_coords_of_ngon(n: i32) -> Vec<Vertex> {
     (0..n).map(|k| {
