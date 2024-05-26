@@ -27,7 +27,7 @@ pub fn draw_triangle(
             gl_FragColor = fragColor;
         }
         ";
-    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source).unwrap();
+    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source);
 
     let vertices: [f32; 9] = [
         0.0, 1.0, 0.0, // top

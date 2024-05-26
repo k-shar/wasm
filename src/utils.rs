@@ -30,12 +30,9 @@ pub fn create_shader(
     gl: &WebGlRenderingContext,
     shader_type: u32,
     source: &str,
-) -> Result<WebGlShader, JsValue> {
+) -> WebGlShader {
 
-
-    let shader = gl
-        .create_shader(shader_type)
-        .ok_or_else(|| JsValue::from_str("Unable to create shader object"))?;
+    let shader = gl.create_shader(shader_type).unwrap();
 
     gl.shader_source(&shader, source);
     gl.compile_shader(&shader);
@@ -45,12 +42,11 @@ pub fn create_shader(
         .as_bool()
         .unwrap_or(false)
     {
-        Ok(shader)
+        shader
     } else {
-        Err(JsValue::from_str(
-            &gl.get_shader_info_log(&shader)
-                .unwrap_or_else(|| "Unknown error creating shader".into()),
-        ))
+        let error_message = gl.get_shader_info_log(&shader)
+            .unwrap_or_else(|| "Unknown error creating shader".into());
+        panic!("Error compiling shader: {}", error_message);
     }
 }
 
@@ -58,17 +54,28 @@ pub fn create_shader(
 pub fn link_shaders(
     gl: &WebGlRenderingContext, 
     vertex_shader_source: &str, 
-    fragment_shader_source: &str
-) -> Result<WebGlProgram, JsValue> {
+    fragment_shader_source: &str,
+) -> WebGlProgram {
 
-    let vertex_shader = create_shader(&gl, WebGlRenderingContext::VERTEX_SHADER, vertex_shader_source).unwrap();
-    let fragment_shader = create_shader(&gl, WebGlRenderingContext::FRAGMENT_SHADER, fragment_shader_source).unwrap();
+    let logging = false;
+    if logging {web_sys::console::log_1(&"Compiling shaders...".into());}
 
-    // link these shaders into a program
+    let vertex_shader = create_shader(&gl, WebGlRenderingContext::VERTEX_SHADER, vertex_shader_source);
+    if logging {web_sys::console::log_1(&"Successfully compiled vertex shader.".into());}
+
+    let fragment_shader = create_shader(&gl, WebGlRenderingContext::FRAGMENT_SHADER, fragment_shader_source);
+    if logging {web_sys::console::log_1(&"Successfully compiled fragment shader.".into());}
+
     let shader_program = gl.create_program().unwrap();
+
     gl.attach_shader(&shader_program, &vertex_shader);
+    if logging {web_sys::console::log_1(&"Successfully attached vertex shader.".into());}
+
     gl.attach_shader(&shader_program, &fragment_shader);
+    if logging {web_sys::console::log_1(&"Successfully attached fragment shader.".into());}
+
     gl.link_program(&shader_program);
+    if logging {web_sys::console::log_1(&"Successfully linked shader program.".into());}
 
     // ensure the program was linked successfully
     if gl
@@ -78,12 +85,11 @@ pub fn link_shaders(
     {
         // Set the shader program as active.
         gl.use_program(Some(&shader_program));
-        Ok(shader_program)
+        shader_program
     } else {
-        return Err(JsValue::from_str(
-            &gl.get_program_info_log(&shader_program)
-                .unwrap_or_else(|| "Unknown error linking program".into()),
-        ));
+        let error_message = gl.get_program_info_log(&shader_program)
+            .unwrap_or_else(|| "Unknown error linking program".into());
+        panic!("Error linking shader program: {}", error_message);
     }
 }
 

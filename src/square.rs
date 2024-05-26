@@ -28,7 +28,7 @@ pub fn draw_square(
             gl_FragColor = fragColor;
         }
         ";
-    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source).unwrap();
+    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source);
 
     // define the vertices of the square
     let vertices: [f32; 12] = [

@@ -104,7 +104,7 @@ pub fn draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
             gl_FragColor = fragColor;
         }
         ";
-    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source).unwrap();
+    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source);
 
     STATE.with(|state| {
 
