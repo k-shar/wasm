@@ -31,5 +31,8 @@ features = [
   'WebGlShader', 
   'WebGlBuffer', 
   'WebGlUniformLocation',
-  'console'
+  'console',
+  'MouseEvent',
+  'DomRect', 
+  'Element'
 ]
