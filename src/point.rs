@@ -20,46 +20,46 @@ struct STATE {
 // Initialize the state
 thread_local! {
     static STATE: RefCell<STATE> = RefCell::new(STATE {
-        resolution: 4,
-        pixels: make_pixels(4),
-        colours: make_colours(make_pixels(4)),
+        resolution: 1,
+        pixels: make_pixels(1),
+        colours: make_colours(make_pixels(1)),
     });
 }
 
 
 // return two triangles
-fn make_square(res: i32, x: i32, y: i32) -> Vec<f32>{
-    let nx = -1.0 + 2.0 * x as f32 / res as f32;
-    let ny = -1.0 + 2.0 * y as f32 / res as f32;
+fn make_square(res: i32, x: i32, y: i32) -> Vec<f32> {
 
-    vec![
-        nx, ny,
-        nx + 1.0 / res as f32, ny,
-        nx, ny + 1.0 / res as f32,
-        nx, ny + 1.0 / res as f32,
-        nx + 1.0 / res as f32, ny,
-        nx + 1.0 / res as f32, ny + 1.0 / res as f32,
-    ]
+    let triangles = vec![
+        x, y,
+        x + 1, y,
+        x, y + 1,
+        x, y + 1,
+        x + 1, y,
+        x + 1, y + 1,
+    ];
 
+    // map triangles onto range -1 to 1
+    triangles.iter().map(|v| (*v as f32 / res as f32) * 2.0 - 1.0).collect::<Vec<f32>>()
 }
 
 fn make_pixels(resolution: i32) -> Vec<f32> {
-    (0..resolution)
-        .flat_map(|x| (0..resolution)
+    (0..resolution*2)
+        .flat_map(|x| (0..resolution*2)
         .flat_map(move |y| make_square(resolution, x, y)))
         .collect()
 }
 
 fn make_colours(pixels: Vec<f32>) -> Vec<Srgb> {
+        let mut rng = rand::thread_rng();
         pixels
             .chunks(3)
             .map(|p| {
                 // random colour
-                let mut rng = rand::thread_rng();
                 Srgb {
-                    red: rng.gen_range(0.0..255.0),
-                    green: rng.gen_range(0.0..255.0),
-                    blue: rng.gen_range(0.0..255.0),
+                    red: rng.gen_range(0.0..1.0),
+                    green: rng.gen_range(0.0..1.0),
+                    blue: rng.gen_range(0.0..1.0),
                     standard: std::marker::PhantomData,
                 }
             }).collect()
@@ -144,10 +144,12 @@ pub fn point_draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
 
         // zip the two lists together
         let data: Vec<f32> = state.pixels
-            .chunks(3)
+            .chunks(2)
             .zip(state.colours.iter())
-            .flat_map(|(v, c)| vec![v[0], v[1], v[2], c.red, c.green, c.blue])
+            .flat_map(|(v, c)| vec![v[0], v[1], c.red, c.green, c.blue])
             .collect::<Vec<f32>>();
+
+        web_sys::console::log_1(&JsValue::from_str(&format!("{:?}", data)));
 
         // draw on the screen
         gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
@@ -158,7 +160,7 @@ pub fn point_draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
             &(unsafe { js_sys::Float32Array::view(&data).into() }),
             WebGlRenderingContext::STATIC_DRAW,
         );
-        gl.draw_arrays(WebGlRenderingContext::TRIANGLES, 0, state.pixels.len() as i32 / 3);
+        gl.draw_arrays(WebGlRenderingContext::TRIANGLES, 0, data.len() as i32 / 5);
 
     });
 
