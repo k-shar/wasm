@@ -1,4 +1,4 @@
-import init, { point_draw, p_update_resolution } from "../pkg/webassembly_webgl_viewer.js";
+import init, { point_draw, p_update_resolution, p_update_box } from "../pkg/webassembly_webgl_viewer.js";
 
 const CANVAS_ID = "point";
 
@@ -15,6 +15,12 @@ async function run() {
   requestAnimationFrame(loop);
 
 }
+
+const box = document.getElementById("box");
+box.addEventListener("change", (e) => {
+  e.preventDefault();
+  p_update_box(box.checked);
+});
 
 const shape_sides = document.getElementById("shape_sides");
 shape_sides.addEventListener("input", (e) => {

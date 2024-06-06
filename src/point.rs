@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGlProgram, WebGlRenderingContext};
 use palette::Srgb;
-use std::cell::RefCell;
+use std::{cell::RefCell, collections::HashMap};
 
 use rand::Rng;
 
@@ -10,10 +10,12 @@ extern crate js_sys;
 use crate::utils::{init_webgl_context, link_shaders};
 
 // define the state
+#[derive(Debug)]
 struct STATE {
     resolution: i32,
     pixels: Vec<f32>,
     colours: Vec<Srgb>,
+    pointwise: bool,
 }
 
 
@@ -21,8 +23,9 @@ struct STATE {
 thread_local! {
     static STATE: RefCell<STATE> = RefCell::new(STATE {
         resolution: 1,
+        pointwise: false,
         pixels: make_pixels(1),
-        colours: make_colours(make_pixels(1)),
+        colours: make_colours(make_pixels(1), false),
     });
 }
 
@@ -50,20 +53,61 @@ fn make_pixels(resolution: i32) -> Vec<f32> {
         .collect()
 }
 
-fn make_colours(pixels: Vec<f32>) -> Vec<Srgb> {
-        let mut rng = rand::thread_rng();
-        pixels
-            .chunks(3)
-            .map(|p| {
-                // random colour
-                Srgb {
-                    red: rng.gen_range(0.0..1.0),
-                    green: rng.gen_range(0.0..1.0),
-                    blue: rng.gen_range(0.0..1.0),
-                    standard: std::marker::PhantomData,
-                }
-            }).collect()
+fn make_colours(pixels: Vec<f32>, pointwise: bool) -> Vec<Srgb> {
+    if pointwise {
+        pointwise_colours(pixels)
+    } else {
+        individual_colours(pixels)
+    }
+} 
+
+fn pointwise_colours(pixels: Vec<f32>) -> Vec<Srgb> {
+
+    let mut colours: HashMap<String, palette::rgb::Rgb> = HashMap::new();
+    let mut rng = rand::thread_rng();
+
+    pixels.chunks(2).map(|p| {
+
+        // get the hash of the pixel
+        let p = format!("{},{}", (p[0] * 1000.0) as i32, (p[1] * 1000.0) as i32);
+
+        // get the colour from the hashmap or insert a new one
+        colours.entry(p).or_insert_with(|| {
+            Srgb {
+                red: rng.gen_range(0.0..1.0),
+                green: rng.gen_range(0.0..1.0),
+                blue: rng.gen_range(0.0..1.0),
+                standard: std::marker::PhantomData,
+            }
+            
+        }).clone()
+    }).collect()
 }
+
+fn individual_colours(pixels: Vec<f32>) -> Vec<Srgb> {
+    let mut rng = rand::thread_rng();
+    pixels
+        .chunks(3)
+        .map(|_p| {
+            // random colour
+            Srgb {
+                red: rng.gen_range(0.0..1.0),
+                green: rng.gen_range(0.0..1.0),
+                blue: rng.gen_range(0.0..1.0),
+                standard: std::marker::PhantomData,
+            }
+        }).collect()
+}
+
+#[wasm_bindgen]
+pub fn p_update_box(checked: bool) {
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.pointwise = checked;
+        state.colours = make_colours(state.pixels.clone(), state.pointwise);
+    });
+}
+
 
 #[wasm_bindgen]
 pub fn p_update_resolution(res: i32) {
@@ -71,7 +115,7 @@ pub fn p_update_resolution(res: i32) {
         let mut state = state.borrow_mut();
         state.resolution = res;
         state.pixels = make_pixels(res);
-        state.colours = make_colours(state.pixels.clone());
+        state.colours = make_colours(state.pixels.clone(), state.pointwise);
     });
 }
 
@@ -148,8 +192,6 @@ pub fn point_draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
             .zip(state.colours.iter())
             .flat_map(|(v, c)| vec![v[0], v[1], c.red, c.green, c.blue])
             .collect::<Vec<f32>>();
-
-        web_sys::console::log_1(&JsValue::from_str(&format!("{:?}", data)));
 
         // draw on the screen
         gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);

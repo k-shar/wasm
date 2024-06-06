@@ -1,10 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export function g_update_sides(a: number): void;
-export function gradient_draw(a: number, b: number, c: number): void;
 export function draw_triangle(a: number, b: number, c: number, d: number, e: number): void;
 export function draw_square(a: number, b: number, c: number, d: number, e: number): void;
+export function g_update_sides(a: number): void;
+export function gradient_draw(a: number, b: number, c: number): void;
+export function p_update_box(a: number): void;
 export function p_update_resolution(a: number): void;
 export function point_draw(a: number, b: number, c: number): void;
 export function update_sides(a: number): void;

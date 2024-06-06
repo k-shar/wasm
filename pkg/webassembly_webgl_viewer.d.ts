@@ -1,15 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {number} n
-*/
-export function g_update_sides(n: number): void;
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function gradient_draw(canvas_id: string): WebGLRenderingContext;
-/**
 * @param {string} canvas_id
 * @param {Float32Array | undefined} [selected_color]
 * @returns {WebGLRenderingContext}
@@ -21,6 +12,19 @@ export function draw_triangle(canvas_id: string, selected_color?: Float32Array):
 * @returns {WebGLRenderingContext}
 */
 export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
+/**
+* @param {number} n
+*/
+export function g_update_sides(n: number): void;
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function gradient_draw(canvas_id: string): WebGLRenderingContext;
+/**
+* @param {boolean} checked
+*/
+export function p_update_box(checked: boolean): void;
 /**
 * @param {number} res
 */
@@ -52,10 +56,11 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly g_update_sides: (a: number) => void;
-  readonly gradient_draw: (a: number, b: number, c: number) => void;
   readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly g_update_sides: (a: number) => void;
+  readonly gradient_draw: (a: number, b: number, c: number) => void;
+  readonly p_update_box: (a: number) => void;
   readonly p_update_resolution: (a: number) => void;
   readonly point_draw: (a: number, b: number, c: number) => void;
   readonly update_sides: (a: number) => void;

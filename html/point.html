@@ -4,16 +4,22 @@
 
   <head>
     <meta charset="UTF-8" />
-    <title>point.</title>
+    <title>triangle grid</title>
     <link rel="stylesheet" href="../style.css" />
   </head>
 
   <body style="margin: 0; padding: 0; height: 100%;">
 
 
-      <h1>point</h1>
-     
-      <h1 id="shape_sides_text">resolution</h1>
+      <h1>triangle grid</h1>
+
+
+      <div style="display: flex;">
+        <h2>pointwise</h2>
+        <input id="box" type="checkbox">
+      </div>
+
+      <h2 id="shape_sides_text">resolution</h2>
       <input style="width: 40vw;" type="range" id="shape_sides" min="1" max="60" value="6"></input>
 
       <canvas id="point"></canvas>
