@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>sin wave</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+
+  <body style="margin: 0; padding: 0; height: 100%;">
+
+      <h1>sin wave</h1>
+
+      <h2 id="wavelength_text">wavelength</h2>
+      <input style="width: 40vw;" type="range" id="wavelength" min="1" max="60" value="6"></input>
+
+      <h2 id="resolution_text">resiolution</h2>
+      <input style="width: 40vw;" type="range" id="resolution" min="1" max="60" value="6"></input>
+      
+      <canvas id="sin_wave"></canvas>
+  
+    <script type="module" src="../pkg/webassembly_webgl_viewer.js"></script>
+    <script type="module" src="../js/sin_wave.js"></script>
+
+  </body>
+</html>
