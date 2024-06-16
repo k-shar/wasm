@@ -8,11 +8,11 @@ async function run() {
   
   document.getElementById("wavelength").value = 10;
 
-  function loop() {
-    sin_draw(CANVAS_ID);
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
+//   function loop() {
+//     sin_draw(CANVAS_ID);
+//     requestAnimationFrame(loop);
+//   }
+//   requestAnimationFrame(loop);
 
 }
 
@@ -21,6 +21,7 @@ resolution.addEventListener("input", (e) => {
   e.preventDefault();
   s_update_resolution(resolution.value);
   document.getElementById("resolution_text").innerText = "resolution: " + resolution.value;
+  sin_draw(CANVAS_ID);
 });
 
 const wavelength = document.getElementById("wavelength");
@@ -28,6 +29,7 @@ wavelength.addEventListener("input", (e) => {
   e.preventDefault();
   s_update_wavelength(wavelength.value);
   document.getElementById("wavelength_text").innerText = "wavelength: " + wavelength.value;
+  sin_draw(CANVAS_ID);
 });
 
 run();

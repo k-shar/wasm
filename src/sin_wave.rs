@@ -1,3 +1,4 @@
+use js_sys::global;
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGlProgram, WebGlRenderingContext};
 use palette::Srgb;
@@ -16,6 +17,7 @@ struct STATE {
     wavelength: f32,
     pixels: Vec<f32>,
     colours: Vec<Srgb>,
+    gl: WebGlRenderingContext,
 }
 
 
@@ -26,6 +28,7 @@ thread_local! {
         wavelength: 10.0,
         pixels: make_pixels(1),
         colours: pointwise_colours(make_pixels(1), 10.0),
+        gl: init_gl("sin_wave"),
     });
 }
 
@@ -90,7 +93,7 @@ pub fn s_update_wavelength(w: f32) {
 
 
 #[wasm_bindgen]
-pub fn sin_draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
+pub fn init_gl(canvas_id: &str) -> WebGlRenderingContext {
 
     // create gl context and shader program
     let gl: WebGlRenderingContext = init_webgl_context(canvas_id).unwrap();
@@ -147,7 +150,14 @@ pub fn sin_draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
         2 * std::mem::size_of::<f32>() as i32,
     );
     gl.enable_vertex_attrib_array(colour_location);
-    
+
+    gl
+
+}
+
+
+#[wasm_bindgen]
+pub fn sin_draw(c_id: &str) {
 
     STATE.with(|state: &RefCell<STATE>| {
 
@@ -162,17 +172,15 @@ pub fn sin_draw(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
             .collect::<Vec<f32>>();
 
         // draw on the screen
-        gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
+        state.gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
 
         // draw shape
-        gl.buffer_data_with_array_buffer_view(
+        state.gl.buffer_data_with_array_buffer_view(
             WebGlRenderingContext::ARRAY_BUFFER,
             &(unsafe { js_sys::Float32Array::view(&data).into() }),
             WebGlRenderingContext::STATIC_DRAW,
         );
-        gl.draw_arrays(WebGlRenderingContext::TRIANGLES, 0, data.len() as i32 / 5);
+        state.gl.draw_arrays(WebGlRenderingContext::TRIANGLES, 0, data.len() as i32 / 5);
 
     });
-
-    Ok(gl)
 }
