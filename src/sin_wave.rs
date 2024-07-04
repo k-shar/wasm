@@ -18,6 +18,7 @@ struct STATE {
     pixels: Vec<f32>,
     colours: Vec<Srgb>,
     gl: WebGlRenderingContext,
+    center: (f32, f32),
 }
 
 
@@ -26,8 +27,9 @@ thread_local! {
     static STATE: RefCell<STATE> = RefCell::new(STATE {
         resolution: 100,
         wavelength: 10.0,
-        pixels: make_pixels(1),
-        colours: pointwise_colours(make_pixels(1), 10.0),
+        pixels: make_pixels(20),
+        colours: pointwise_colours(make_pixels(1), 10.0, 0.0, 0.0),
+        center: (0.0, 0.0),
         gl: init_gl("sin_wave"),
     });
 }
@@ -48,14 +50,14 @@ fn make_pixels(resolution: i32) -> Vec<f32> {
         .collect()
 }
 
-fn pointwise_colours(pixels: Vec<f32>, w: f32) -> Vec<Srgb> {
+fn pointwise_colours(pixels: Vec<f32>, w: f32, x: f32, y: f32) -> Vec<Srgb> {
 
     let mut rng = rand::thread_rng();
     let mut colours: HashMap<String, palette::rgb::Rgb> = HashMap::new();
 
     pixels.chunks(2).map(|p| {
 
-        let dist = ((p[0]).powi(2) + (p[1]).powi(2)).sqrt();
+        let dist = ((p[0] - x).powi(2) + (p[1] - y).powi(2)).sqrt();
         let val = (1.0 + (w * dist).cos()) / 2.0;
 
         let p = format!("{},{}", (p[0] * 1000.0) as i32, (p[1] * 1000.0) as i32);
@@ -78,7 +80,7 @@ pub fn s_update_resolution(res: i32) {
         let mut state = state.borrow_mut();
         state.resolution = res;
         state.pixels = make_pixels(res);
-        state.colours = pointwise_colours(state.pixels.clone(), state.wavelength);
+        state.colours = pointwise_colours(state.pixels.clone(), state.wavelength, state.center.0, state.center.1);
     });
 }
 
@@ -87,10 +89,19 @@ pub fn s_update_wavelength(w: f32) {
     STATE.with(|state| {
         let mut state = state.borrow_mut();
         state.wavelength = w;
-        state.colours = pointwise_colours(state.pixels.clone(), state.wavelength);
+        state.colours = pointwise_colours(state.pixels.clone(), state.wavelength, state.center.0, state.center.1);
     });
 }
 
+#[wasm_bindgen]
+pub fn s_mouse_move(x: f32, y: f32) {
+    web_sys::console::log_1(&format!("x: {}, y: {}", x, y).into());
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.center = (x, y);
+        state.colours = pointwise_colours(state.pixels.clone(), state.wavelength, x, y);
+    });
+}
 
 #[wasm_bindgen]
 pub fn init_gl(canvas_id: &str) -> WebGlRenderingContext {
@@ -155,6 +166,14 @@ pub fn init_gl(canvas_id: &str) -> WebGlRenderingContext {
 
 }
 
+#[wasm_bindgen]
+pub fn mouse_move(x: f32, y: f32) {
+    STATE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.pixels = make_pixels(state.resolution);
+        state.colours = pointwise_colours(state.pixels.clone(), state.wavelength, state.center.0, state.center.1);
+    });
+}
 
 #[wasm_bindgen]
 pub fn sin_draw(c_id: &str) {

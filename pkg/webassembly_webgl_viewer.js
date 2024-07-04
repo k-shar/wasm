@@ -176,111 +176,6 @@ function getInt32Memory0() {
     }
     return cachedInt32Memory0;
 }
-/**
-* @param {number} res
-*/
-export function s_update_resolution(res) {
-    wasm.s_update_resolution(res);
-}
-
-/**
-* @param {number} w
-*/
-export function s_update_wavelength(w) {
-    wasm.s_update_wavelength(w);
-}
-
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function init_gl(canvas_id) {
-    const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.init_gl(ptr0, len0);
-    return takeObject(ret);
-}
-
-/**
-* @param {string} c_id
-*/
-export function sin_draw(c_id) {
-    const ptr0 = passStringToWasm0(c_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    const len0 = WASM_VECTOR_LEN;
-    wasm.sin_draw(ptr0, len0);
-}
-
-/**
-* @param {number} n
-*/
-export function g_update_sides(n) {
-    wasm.g_update_sides(n);
-}
-
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function gradient_draw(canvas_id) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len0 = WASM_VECTOR_LEN;
-        wasm.gradient_draw(retptr, ptr0, len0);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
-
-/**
-* @param {number} n
-*/
-export function update_sides(n) {
-    wasm.update_sides(n);
-}
-
-/**
-* @param {number} s
-*/
-export function update_rotation_speed(s) {
-    wasm.update_rotation_speed(s);
-}
-
-/**
-* @param {number} s
-*/
-export function update_colour_speed(s) {
-    wasm.update_colour_speed(s);
-}
-
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function draw(canvas_id) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len0 = WASM_VECTOR_LEN;
-        wasm.draw(retptr, ptr0, len0);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
 
 let cachedFloat32Memory0 = null;
 
@@ -327,6 +222,121 @@ export function draw_triangle(canvas_id, selected_color) {
 }
 
 /**
+* @param {boolean} checked
+*/
+export function p_update_box(checked) {
+    wasm.p_update_box(checked);
+}
+
+/**
+* @param {number} res
+*/
+export function p_update_resolution(res) {
+    wasm.p_update_resolution(res);
+}
+
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function point_draw(canvas_id) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.point_draw(retptr, ptr0, len0);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+}
+
+/**
+* @param {number} n
+*/
+export function g_update_sides(n) {
+    wasm.g_update_sides(n);
+}
+
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function gradient_draw(canvas_id) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.gradient_draw(retptr, ptr0, len0);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+}
+
+/**
+* @param {number} res
+*/
+export function s_update_resolution(res) {
+    wasm.s_update_resolution(res);
+}
+
+/**
+* @param {number} w
+*/
+export function s_update_wavelength(w) {
+    wasm.s_update_wavelength(w);
+}
+
+/**
+* @param {number} x
+* @param {number} y
+*/
+export function s_mouse_move(x, y) {
+    wasm.s_mouse_move(x, y);
+}
+
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function init_gl(canvas_id) {
+    const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.init_gl(ptr0, len0);
+    return takeObject(ret);
+}
+
+/**
+* @param {number} x
+* @param {number} y
+*/
+export function mouse_move(x, y) {
+    wasm.mouse_move(x, y);
+}
+
+/**
+* @param {string} c_id
+*/
+export function sin_draw(c_id) {
+    const ptr0 = passStringToWasm0(c_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    wasm.sin_draw(ptr0, len0);
+}
+
+/**
 * @param {string} canvas_id
 * @param {Float32Array | undefined} [selected_color]
 * @returns {WebGLRenderingContext}
@@ -352,29 +362,36 @@ export function draw_square(canvas_id, selected_color) {
 }
 
 /**
-* @param {boolean} checked
+* @param {number} n
 */
-export function p_update_box(checked) {
-    wasm.p_update_box(checked);
+export function update_sides(n) {
+    wasm.update_sides(n);
 }
 
 /**
-* @param {number} res
+* @param {number} s
 */
-export function p_update_resolution(res) {
-    wasm.p_update_resolution(res);
+export function update_rotation_speed(s) {
+    wasm.update_rotation_speed(s);
+}
+
+/**
+* @param {number} s
+*/
+export function update_colour_speed(s) {
+    wasm.update_colour_speed(s);
 }
 
 /**
 * @param {string} canvas_id
 * @returns {WebGLRenderingContext}
 */
-export function point_draw(canvas_id) {
+export function draw(canvas_id) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        wasm.point_draw(retptr, ptr0, len0);
+        wasm.draw(retptr, ptr0, len0);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -442,6 +459,10 @@ function __wbg_get_imports() {
         const ret = typeof(v) === 'boolean' ? (v ? 1 : 0) : 2;
         return ret;
     };
+    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
+        const ret = getStringFromWasm0(arg0, arg1);
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbg_crypto_1d1f22824a6a080c = function(arg0) {
         const ret = getObject(arg0).crypto;
         return addHeapObject(ret);
@@ -474,10 +495,6 @@ function __wbg_get_imports() {
     imports.wbg.__wbindgen_is_function = function(arg0) {
         const ret = typeof(getObject(arg0)) === 'function';
         return ret;
-    };
-    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
-        const ret = getStringFromWasm0(arg0, arg1);
-        return addHeapObject(ret);
     };
     imports.wbg.__wbg_msCrypto_eb05e62b530a1508 = function(arg0) {
         const ret = getObject(arg0).msCrypto;
@@ -597,6 +614,9 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbg_viewport_221ade2aef6032c8 = function(arg0, arg1, arg2, arg3, arg4) {
         getObject(arg0).viewport(arg1, arg2, arg3, arg4);
+    };
+    imports.wbg.__wbg_log_5bb5f88f245d7762 = function(arg0) {
+        console.log(getObject(arg0));
     };
     imports.wbg.__wbg_instanceof_HtmlCanvasElement_46bdbf323b0b18d1 = function(arg0) {
         let result;
