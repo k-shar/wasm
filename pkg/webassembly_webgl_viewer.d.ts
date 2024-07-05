@@ -28,6 +28,21 @@ export function mouse_move(x: number, y: number): void;
 */
 export function sin_draw(c_id: string): void;
 /**
+* @param {string} canvas_id
+* @param {Float32Array | undefined} [selected_color]
+* @returns {WebGLRenderingContext}
+*/
+export function draw_triangle(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
+/**
+* @param {number} n
+*/
+export function g_update_sides(n: number): void;
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function gradient_draw(canvas_id: string): WebGLRenderingContext;
+/**
 * @param {number} n
 */
 export function update_sides(n: number): void;
@@ -48,14 +63,11 @@ export function draw(canvas_id: string): WebGLRenderingContext;
 */
 export function user_init(): void;
 /**
-* @param {number} n
-*/
-export function g_update_sides(n: number): void;
-/**
 * @param {string} canvas_id
+* @param {Float32Array | undefined} [selected_color]
 * @returns {WebGLRenderingContext}
 */
-export function gradient_draw(canvas_id: string): WebGLRenderingContext;
+export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
 /**
 * @param {boolean} checked
 */
@@ -69,18 +81,6 @@ export function p_update_resolution(res: number): void;
 * @returns {WebGLRenderingContext}
 */
 export function point_draw(canvas_id: string): WebGLRenderingContext;
-/**
-* @param {string} canvas_id
-* @param {Float32Array | undefined} [selected_color]
-* @returns {WebGLRenderingContext}
-*/
-export function draw_triangle(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
-/**
-* @param {string} canvas_id
-* @param {Float32Array | undefined} [selected_color]
-* @returns {WebGLRenderingContext}
-*/
-export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -92,18 +92,18 @@ export interface InitOutput {
   readonly init_gl: (a: number, b: number) => number;
   readonly mouse_move: (a: number, b: number) => void;
   readonly sin_draw: (a: number, b: number) => void;
+  readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly g_update_sides: (a: number) => void;
+  readonly gradient_draw: (a: number, b: number, c: number) => void;
   readonly update_sides: (a: number) => void;
   readonly update_rotation_speed: (a: number) => void;
   readonly update_colour_speed: (a: number) => void;
   readonly draw: (a: number, b: number, c: number) => void;
   readonly user_init: () => void;
-  readonly g_update_sides: (a: number) => void;
-  readonly gradient_draw: (a: number, b: number, c: number) => void;
+  readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly p_update_box: (a: number) => void;
   readonly p_update_resolution: (a: number) => void;
   readonly point_draw: (a: number, b: number, c: number) => void;
-  readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_export_2: WebAssembly.Table;

@@ -7,9 +7,12 @@
     <link rel="stylesheet" href="../style.css" />
     <script type="module">
         import init, { user_init } from "../pkg/webassembly_webgl_viewer.js";
-
-        await init();
-        await user_init();
+        
+        async function run() {
+            await init();
+            await user_init();
+        }
+        run();
 
         // const shape_sides = document.getElementById("shape_sides");
         // shape_sides.addEventListener("input", (e) => {

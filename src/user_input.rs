@@ -1,36 +1,33 @@
+use rand::{thread_rng, Rng};
 use wasm_bindgen::prelude::*;
 use web_sys::{Document, HtmlElement, HtmlInputElement, WebGlProgram, WebGlRenderingContext, Window};
-use palette::{Hsv, Srgb, FromColor};
-use std::{borrow::BorrowMut, cell::RefCell, rc::Rc};
 use euclid::{self, Box2D};
 
 extern crate js_sys;
 
 use crate::utils::{init_webgl_context, link_shaders};
 
-
 // define the state
 #[derive(Clone)]
 struct STATE {
     rects: Vec<Box2D<f64, f64>>,
-    x: f64
+    x: f32
 }
-
 
 #[wasm_bindgen]
 pub fn user_init() {
 
+    // creat initial state
     let state = STATE {
         rects: vec![
-            Box2D::new(euclid::point2(0.0, 0.0), euclid::point2(0.5, 0.5)),
             Box2D::new(euclid::point2(0.7, 0.3), euclid::point2(-0.5, -0.5)),
+            Box2D::new(euclid::point2(0.0, 0.0), euclid::point2(0.5, 0.5)),
         ],
         x: 0.0,
     };
 
-    let gl = init_webgl_context("user_input").unwrap();
     
-    //  create shader program
+    // create shader program
     let vertex_shader_source =
         "
         attribute vec2 coordinates;
@@ -52,6 +49,8 @@ pub fn user_init() {
         }
         ";
 
+
+    let gl = init_webgl_context("user_input").unwrap();
         
     // spawn the ARRAY_BUFFER for the vertices to use each frame
     let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source); 
@@ -77,12 +76,12 @@ pub fn user_init() {
     );
     gl.enable_vertex_attrib_array(colour_location);
 
-    let window = web_sys::window().expect("should have a Window");
-    let closure = Closure::wrap(
-        Box::new(move || user_draw(gl.clone(), state.clone())) as Box<dyn FnMut()>
-    );
 
-    window
+    // call initial request animation frame, do again at the end of user_draw
+    let closure: Closure<dyn FnMut()> = Closure::wrap(
+        Box::new(move || user_draw(gl.clone(), state.clone()))
+    );
+    web_sys::window().expect("should have a Window")
         .request_animation_frame(closure.as_ref().unchecked_ref())
         .expect("should register `requestAnimationFrame` OK");
     closure.forget();
@@ -92,23 +91,30 @@ pub fn user_init() {
 
 fn user_draw(gl: WebGlRenderingContext, mut state: STATE) {
 
-    state.x += 0.1;
-    web_sys::console::log_1(&state.x.into());
-
     gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
     
+    let mut rng = thread_rng();
+    let mut i = 0;
+
     for rect in state.rects.iter() {
+        i += 1;
         let bottom_left: euclid::Point2D<f64, f64> = rect.min;
         let top_right: euclid::Point2D<f64, f64> = rect.max;
         let top_left: euclid::Point2D<f64, f64> = euclid::point2(bottom_left.x, top_right.y);
         let bottom_right: euclid::Point2D<f64, f64> = euclid::point2(top_right.x, bottom_left.y);
 
         let data = vec![
-            (state.x + top_left.x) as f32, top_left.y as f32, 1.0, 0.0, 0.0,
+            top_left.x as f32, top_left.y as f32, 1.0, 0.0, 0.0,
             bottom_left.x as f32, bottom_left.y as f32, 0.0, 1.0, 0.0,
             bottom_right.x as f32, bottom_right.y as f32, 0.0, 0.0, 1.0,
             top_right.x as f32, top_right.y as f32, 1.0, 1.0, 1.0,
-        ];
+        ].iter().map(|x| 
+            *x 
+            + ((state.x + rng.gen_range(0.0..0.3)).sin() / 5.0)
+            * if i % 2 == 0 { 1.0 } else { -1.0 }
+            - 0.1
+        ).collect::<Vec<f32>>();
+
         // fill ARRAY_BUFFER with the vertex data
         gl.buffer_data_with_array_buffer_view(
             WebGlRenderingContext::ARRAY_BUFFER,
@@ -119,4 +125,18 @@ fn user_draw(gl: WebGlRenderingContext, mut state: STATE) {
         // draw on the screen
         gl.draw_arrays(WebGlRenderingContext::TRIANGLE_FAN, 0, 4);
     }
+    
+
+    // request for another animation frame, with changes to state if needed
+    let closure: Closure<dyn FnMut()> = Closure::wrap(
+        Box::new(move || {
+            state.x += 0.05;
+            user_draw(gl.clone(), state.clone())
+        })
+    );
+    web_sys::window().expect("should have a Window")
+        .request_animation_frame(closure.as_ref().unchecked_ref())
+        .expect("should register `requestAnimationFrame` OK");
+    closure.forget();
+
 }
