@@ -16,6 +16,7 @@ crate-type = ["cdylib"]
 palette = "0.7"
 wasm-bindgen = "0.2.86"
 rand = "0.8.4"
+euclid = "0.22"
 getrandom = { version = "0.2", features = ["js"] }
 js-sys = "0.3"
 pkg = "3.0.0"
@@ -26,6 +27,7 @@ features = [
   'Document', 
   'Window', 
   'HtmlCanvasElement' ,
+  'HtmlInputElement',
   'WebGlRenderingContext', 
   'WebGl2RenderingContext', 
   'WebGlProgram', 
