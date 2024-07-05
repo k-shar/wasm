@@ -20,13 +20,13 @@ struct STATE {
 #[wasm_bindgen]
 pub fn user_init() {
 
-    let state = Rc::new(RefCell::new(STATE {
+    let state = STATE {
         rects: vec![
             Box2D::new(euclid::point2(0.0, 0.0), euclid::point2(0.5, 0.5)),
             Box2D::new(euclid::point2(0.7, 0.3), euclid::point2(-0.5, -0.5)),
         ],
         x: 0.0,
-    }));
+    };
 
     let gl = init_webgl_context("user_input").unwrap();
     
@@ -79,7 +79,7 @@ pub fn user_init() {
 
     let window = web_sys::window().expect("should have a Window");
     let closure = Closure::wrap(
-        Box::new(move || user_draw(gl.clone(), Rc::clone(&state))) as Box<dyn FnMut()>
+        Box::new(move || user_draw(gl.clone(), state.clone())) as Box<dyn FnMut()>
     );
 
     window
@@ -90,7 +90,7 @@ pub fn user_init() {
 }
 
 
-fn user_draw(gl: WebGlRenderingContext, state: Rc<RefCell<STATE>>) {
+fn user_draw(gl: WebGlRenderingContext, mut state: STATE) {
 
     state.x += 0.1;
     web_sys::console::log_1(&state.x.into());
