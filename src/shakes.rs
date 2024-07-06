@@ -32,7 +32,7 @@ thread_local! {
 }
 
 #[wasm_bindgen]
-pub fn user_init() {
+pub fn shakes_init() {
     
     let document = window().unwrap().document().unwrap();
 

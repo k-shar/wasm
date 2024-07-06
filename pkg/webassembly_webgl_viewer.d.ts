@@ -1,11 +1,45 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
+* @param {boolean} checked
+*/
+export function p_update_box(checked: boolean): void;
+/**
+* @param {number} res
+*/
+export function p_update_resolution(res: number): void;
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function point_draw(canvas_id: string): WebGLRenderingContext;
+/**
+* @param {number} n
+*/
+export function g_update_sides(n: number): void;
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function gradient_draw(canvas_id: string): WebGLRenderingContext;
+/**
+*/
+export function drag_init(): void;
+/**
+* @param {string} canvas_id
+* @param {Float32Array | undefined} [selected_color]
+* @returns {WebGLRenderingContext}
+*/
+export function draw_triangle(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
+/**
 * @param {string} canvas_id
 * @param {Float32Array | undefined} [selected_color]
 * @returns {WebGLRenderingContext}
 */
 export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
+/**
+*/
+export function shakes_init(): void;
 /**
 * @param {number} n
 */
@@ -23,37 +57,6 @@ export function update_colour_speed(s: number): void;
 * @returns {WebGLRenderingContext}
 */
 export function draw(canvas_id: string): WebGLRenderingContext;
-/**
-*/
-export function user_init(): void;
-/**
-* @param {string} canvas_id
-* @param {Float32Array | undefined} [selected_color]
-* @returns {WebGLRenderingContext}
-*/
-export function draw_triangle(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
-/**
-* @param {number} n
-*/
-export function g_update_sides(n: number): void;
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function gradient_draw(canvas_id: string): WebGLRenderingContext;
-/**
-* @param {boolean} checked
-*/
-export function p_update_box(checked: boolean): void;
-/**
-* @param {number} res
-*/
-export function p_update_resolution(res: number): void;
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function point_draw(canvas_id: string): WebGLRenderingContext;
 /**
 * @param {number} res
 */
@@ -86,18 +89,19 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly p_update_box: (a: number) => void;
+  readonly p_update_resolution: (a: number) => void;
+  readonly point_draw: (a: number, b: number, c: number) => void;
+  readonly g_update_sides: (a: number) => void;
+  readonly gradient_draw: (a: number, b: number, c: number) => void;
+  readonly drag_init: () => void;
+  readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly shakes_init: () => void;
   readonly update_sides: (a: number) => void;
   readonly update_rotation_speed: (a: number) => void;
   readonly update_colour_speed: (a: number) => void;
   readonly draw: (a: number, b: number, c: number) => void;
-  readonly user_init: () => void;
-  readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly g_update_sides: (a: number) => void;
-  readonly gradient_draw: (a: number, b: number, c: number) => void;
-  readonly p_update_box: (a: number) => void;
-  readonly p_update_resolution: (a: number) => void;
-  readonly point_draw: (a: number, b: number, c: number) => void;
   readonly s_update_resolution: (a: number) => void;
   readonly s_update_wavelength: (a: number) => void;
   readonly s_mouse_move: (a: number, b: number) => void;

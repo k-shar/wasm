@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>collisions</title>
+    <link rel="stylesheet" href="../style.css" />
+    <script type="module">
+        import init, { drag_init } from "../pkg/webassembly_webgl_viewer.js";
+        
+        async function run() {
+            await init();
+            await drag_init();
+        }
+        run();
+
+    </script>
+</head>
+
+<body style="margin: 0; padding: 0; height: 100%;">
+    <h1>drag/click/collisions</h1>
+    
+    <canvas style="background-color:#010009", id="user_input" width="800" height="600"></canvas>
+
+</body>
+
+</html>
+
+

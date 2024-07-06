@@ -6,11 +6,11 @@
     <title>shakes!</title>
     <link rel="stylesheet" href="../style.css" />
     <script type="module">
-        import init, { user_init } from "../pkg/webassembly_webgl_viewer.js";
+        import init, { shakes_init } from "../pkg/webassembly_webgl_viewer.js";
         
         async function run() {
             await init();
-            await user_init();
+            await shakes_init();
         }
         run();
 

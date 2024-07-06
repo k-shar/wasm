@@ -1,18 +1,19 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export function p_update_box(a: number): void;
+export function p_update_resolution(a: number): void;
+export function point_draw(a: number, b: number, c: number): void;
+export function g_update_sides(a: number): void;
+export function gradient_draw(a: number, b: number, c: number): void;
+export function drag_init(): void;
+export function draw_triangle(a: number, b: number, c: number, d: number, e: number): void;
 export function draw_square(a: number, b: number, c: number, d: number, e: number): void;
+export function shakes_init(): void;
 export function update_sides(a: number): void;
 export function update_rotation_speed(a: number): void;
 export function update_colour_speed(a: number): void;
 export function draw(a: number, b: number, c: number): void;
-export function user_init(): void;
-export function draw_triangle(a: number, b: number, c: number, d: number, e: number): void;
-export function g_update_sides(a: number): void;
-export function gradient_draw(a: number, b: number, c: number): void;
-export function p_update_box(a: number): void;
-export function p_update_resolution(a: number): void;
-export function point_draw(a: number, b: number, c: number): void;
 export function s_update_resolution(a: number): void;
 export function s_update_wavelength(a: number): void;
 export function s_mouse_move(a: number, b: number): void;
