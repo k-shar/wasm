@@ -26,7 +26,7 @@ thread_local! {
             Box2D::new(euclid::point2(0.0, 0.0), euclid::point2(0.5, 0.5)),
         ],
         x: 0.0,
-        c: 0.1,
+        c: 1.0,
         moving: true,
     });
 }
