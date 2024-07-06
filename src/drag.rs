@@ -17,6 +17,7 @@ struct Space {
 struct Draggable {
     rect: Rect<f32, f32>,
     colour: [f32; 3],
+    hovered: bool,
 }
 
 // define the state
@@ -37,25 +38,30 @@ thread_local! {
                     Draggable {
                         rect: Rect::new(euclid::point2(-0.5, -0.5), euclid::size2(0.1, 0.1)),
                         colour: [1.0, 1.0, 0.0],
+                        hovered: false,
                     },
                     Draggable {
                         rect: Rect::new(euclid::point2(0.5, 0.5), euclid::size2(0.1, 0.1)),
                         colour: [0.0, 1.0, 1.0],
+                        hovered: false,
                     },
                     Draggable {
                         rect: Rect::new(euclid::point2(-0.5, 0.5), euclid::size2(0.1, 0.1)),
                         colour: [1.0, 0.0, 1.0],
+                        hovered: false,
                     },
                     Draggable {
                         rect: Rect::new(euclid::point2(0.5, -0.5), euclid::size2(0.1, 0.1)),
                         colour: [0.0, 1.0, 0.0],
+                        hovered: false,
                     },
                 ],
             },
         ],
         mouse_cursor: Draggable {
-            rect: Rect::new(euclid::point2(0.0, 0.0), euclid::size2(0.1, 0.1)),
+            rect: Rect::new(euclid::point2(0.0, 0.0), euclid::size2(0.06, 0.06)),
             colour: [1.0, 0.0, 0.0],
+            hovered: false,
         },
         mouse_pos: euclid::point2(0.0, 0.0),
         mouse_down: false,
@@ -82,13 +88,25 @@ pub fn drag_init() {
             1.0 + -2.0 * (event.client_y() as f64 - bounding_rect.y()) as f32 / bounding_rect.height() as f32
         );
 
-        // give state this knoeledge
         STATE.with(|state| {
             let mut state = state.borrow_mut();
+
+            // mouse move update state
             state.mouse_pos = mouse_pos;
             state.mouse_down = event.buttons() == 1;
-            state.mouse_cursor.rect.origin = mouse_pos - euclid::vec2(0.05, 0.05);
+            state.mouse_cursor.rect.origin = mouse_pos - state.mouse_cursor.rect.size / 2.0;
+
+            // check if any draggable is hovered
+            let mouse_cursor_box = state.mouse_cursor.rect.clone();
+            for space in state.spaces.iter_mut() {
+                for draggable in space.verticies.iter_mut() {
+                    // if intersects with mouse_cusor
+                    draggable.hovered = mouse_cursor_box.intersects(&draggable.rect);
+                }
+            }
+
         });
+        
 
     }));
     canvas.add_event_listener_with_callback("mousemove", closure.as_ref().unchecked_ref()).unwrap();
@@ -100,7 +118,7 @@ pub fn drag_init() {
 }
 
 
-fn draw_draggable(gl: WebGlRenderingContext, d: Draggable) {
+fn draw_draggable(gl: WebGlRenderingContext, mut d: Draggable) {
 
     let rect = d.rect;
 
@@ -108,6 +126,9 @@ fn draw_draggable(gl: WebGlRenderingContext, d: Draggable) {
     let bottom_left = rect.origin + euclid::vec2(rect.size.width, 0.0);
     let bottom_right = rect.origin + rect.size;
     let top_right = rect.origin + euclid::vec2(0.0, rect.size.height);
+
+    // hover colour
+    if d.hovered { d.colour = [1.0, 1.0, 1.0] }
 
     let data = vec![
         top_left.x as f32, top_left.y as f32, d.colour[0], d.colour[1], d.colour[2],
@@ -126,23 +147,43 @@ fn draw_draggable(gl: WebGlRenderingContext, d: Draggable) {
 }
 
 
+fn draw_space(gl: WebGlRenderingContext, space: Space) {
+
+    // find min and max x and y values
+    let min_x = space.verticies.iter().map(|d| d.rect.origin.x + d.rect.size.width / 2.0).fold(f32::INFINITY, f32::min);
+    let min_y = space.verticies.iter().map(|d| d.rect.origin.y + d.rect.size.height / 2.0).fold(f32::INFINITY, f32::min);
+    let max_x = space.verticies.iter().map(|d| d.rect.origin.x + d.rect.size.width / 2.0).fold(f32::NEG_INFINITY, f32::max);
+    let max_y = space.verticies.iter().map(|d| d.rect.origin.y + d.rect.size.height / 2.0).fold(f32::NEG_INFINITY, f32::max);
+
+    // draw square
+    draw_draggable(
+        gl.clone(), 
+        Draggable {
+            rect: Rect::new(euclid::point2(min_x, min_y), euclid::size2(max_x - min_x, max_y - min_y)),
+            colour: [0.3, 0.3, 0.3],
+            hovered: false,
+        }
+    );
+
+    for draggable in space.verticies.iter() {
+        draw_draggable(gl.clone(), draggable.clone());
+    }
+}
+
 fn user_draw(gl: WebGlRenderingContext) {
 
     gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
     
     STATE.with(|state| {
-
         let state: RefMut<STATE> = state.borrow_mut();
-
-        // draw mouse cursor 
-        draw_draggable(gl.clone(), state.mouse_cursor.clone());
 
         // draw spaces
         for space in state.spaces.iter() {
-            for draggable in space.verticies.iter() {
-                draw_draggable(gl.clone(), draggable.clone());
-            }
+            draw_space(gl.clone(), space.clone());
         }
+
+        // draw mouse cursor 
+        draw_draggable(gl.clone(), state.mouse_cursor.clone());
     });
 
     // request for another animation frame
