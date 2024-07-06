@@ -2,6 +2,59 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{WebGlRenderingContext, WebGlShader, WebGlProgram};
 
+pub fn default_gl() -> WebGlRenderingContext{
+
+    // create shader program
+    let vertex_shader_source =
+        "
+        attribute vec2 coordinates;
+        attribute vec3 colour;
+        varying vec3 out_colour;
+
+        void main(void) {
+            gl_Position = vec4(coordinates, 0.0, 1.0);
+            out_colour = colour;
+        }
+        ";
+    let fragment_shader_source = 
+        "
+        precision mediump float;
+        varying vec3 out_colour;
+
+        void main(void) {
+            gl_FragColor = vec4(out_colour, 1.0);
+        }
+        ";
+
+
+    let gl = init_webgl_context("user_input").unwrap();
+        
+    // spawn the ARRAY_BUFFER for the vertices to use each frame
+    let shader_program: WebGlProgram = link_shaders(&gl, vertex_shader_source, fragment_shader_source); 
+    gl.bind_buffer(
+        WebGlRenderingContext::ARRAY_BUFFER, 
+        Some(&gl.create_buffer().unwrap())
+    );
+
+    // specify how the coordinates attribute should read from the vertex buffer
+    let coordinate_location = gl.get_attrib_location(&shader_program, "coordinates") as u32;
+    gl.vertex_attrib_pointer_with_i32(
+        coordinate_location, 2, WebGlRenderingContext::FLOAT, 
+        false, 5 * std::mem::size_of::<f32>() as i32, 0
+    );
+    gl.enable_vertex_attrib_array(coordinate_location);
+
+    // specify how the colour attribute should read from from the vertex buffer
+    let colour_location = gl.get_attrib_location(&shader_program, "colour") as u32; 
+    gl.vertex_attrib_pointer_with_i32(
+        colour_location, 3, WebGlRenderingContext::FLOAT, false, 
+        5 * std::mem::size_of::<f32>() as i32,
+        2 * std::mem::size_of::<f32>() as i32,
+    );
+    gl.enable_vertex_attrib_array(colour_location);
+    gl
+}
+
 pub fn init_webgl_context(canvas_id: &str) -> Result<WebGlRenderingContext, JsValue> {
     
     // get the canvas element from the DOM

@@ -1,6 +1,32 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
+* @param {number} n
+*/
+export function g_update_sides(n: number): void;
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function gradient_draw(canvas_id: string): WebGLRenderingContext;
+/**
+* @param {number} n
+*/
+export function update_sides(n: number): void;
+/**
+* @param {number} s
+*/
+export function update_rotation_speed(s: number): void;
+/**
+* @param {number} s
+*/
+export function update_colour_speed(s: number): void;
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function draw(canvas_id: string): WebGLRenderingContext;
+/**
 * @param {number} res
 */
 export function s_update_resolution(res: number): void;
@@ -32,33 +58,7 @@ export function sin_draw(c_id: string): void;
 * @param {Float32Array | undefined} [selected_color]
 * @returns {WebGLRenderingContext}
 */
-export function draw_triangle(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
-/**
-* @param {number} n
-*/
-export function g_update_sides(n: number): void;
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function gradient_draw(canvas_id: string): WebGLRenderingContext;
-/**
-* @param {number} n
-*/
-export function update_sides(n: number): void;
-/**
-* @param {number} s
-*/
-export function update_rotation_speed(s: number): void;
-/**
-* @param {number} s
-*/
-export function update_colour_speed(s: number): void;
-/**
-* @param {string} canvas_id
-* @returns {WebGLRenderingContext}
-*/
-export function draw(canvas_id: string): WebGLRenderingContext;
+export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
 /**
 */
 export function user_init(): void;
@@ -67,7 +67,7 @@ export function user_init(): void;
 * @param {Float32Array | undefined} [selected_color]
 * @returns {WebGLRenderingContext}
 */
-export function draw_square(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
+export function draw_triangle(canvas_id: string, selected_color?: Float32Array): WebGLRenderingContext;
 /**
 * @param {boolean} checked
 */
@@ -86,21 +86,21 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly s_update_resolution: (a: number) => void;
-  readonly s_update_wavelength: (a: number) => void;
-  readonly s_mouse_move: (a: number, b: number) => void;
-  readonly init_gl: (a: number, b: number) => number;
-  readonly mouse_move: (a: number, b: number) => void;
-  readonly sin_draw: (a: number, b: number) => void;
-  readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly g_update_sides: (a: number) => void;
   readonly gradient_draw: (a: number, b: number, c: number) => void;
   readonly update_sides: (a: number) => void;
   readonly update_rotation_speed: (a: number) => void;
   readonly update_colour_speed: (a: number) => void;
   readonly draw: (a: number, b: number, c: number) => void;
-  readonly user_init: () => void;
+  readonly s_update_resolution: (a: number) => void;
+  readonly s_update_wavelength: (a: number) => void;
+  readonly s_mouse_move: (a: number, b: number) => void;
+  readonly init_gl: (a: number, b: number) => number;
+  readonly mouse_move: (a: number, b: number) => void;
+  readonly sin_draw: (a: number, b: number) => void;
   readonly draw_square: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly user_init: () => void;
+  readonly draw_triangle: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly p_update_box: (a: number) => void;
   readonly p_update_resolution: (a: number) => void;
   readonly point_draw: (a: number, b: number, c: number) => void;
