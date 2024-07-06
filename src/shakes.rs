@@ -1,9 +1,9 @@
 use std::cell::RefCell;
 
 use rand::{thread_rng, Rng};
-use wasm_bindgen::{closure, prelude::*};
-use web_sys::{window, Document, HtmlElement, HtmlInputElement, MouseEvent, WebGlProgram, WebGlRenderingContext, Window};
-use euclid::{self, default, Box2D};
+use wasm_bindgen::prelude::*;
+use web_sys::{window, HtmlElement, HtmlInputElement, MouseEvent, WebGlRenderingContext};
+use euclid::{self, Box2D};
 
 extern crate js_sys;
 
@@ -27,7 +27,7 @@ thread_local! {
         ],
         x: 0.0,
         c: 0.1,
-        moving: false,
+        moving: true,
     });
 }
 

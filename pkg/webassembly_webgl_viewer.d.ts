@@ -73,14 +73,14 @@ export function s_mouse_move(x: number, y: number): void;
 */
 export function init_gl(canvas_id: string): WebGLRenderingContext;
 /**
-* @param {number} x
-* @param {number} y
+* @param {number} _x
+* @param {number} _y
 */
-export function mouse_move(x: number, y: number): void;
+export function mouse_move(_x: number, _y: number): void;
 /**
-* @param {string} c_id
+* @param {string} _c_id
 */
-export function sin_draw(c_id: string): void;
+export function sin_draw(_c_id: string): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 

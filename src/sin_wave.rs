@@ -1,4 +1,3 @@
-use js_sys::global;
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGlProgram, WebGlRenderingContext};
 use palette::Srgb;
@@ -167,7 +166,7 @@ pub fn init_gl(canvas_id: &str) -> WebGlRenderingContext {
 }
 
 #[wasm_bindgen]
-pub fn mouse_move(x: f32, y: f32) {
+pub fn mouse_move(_x: f32, _y: f32) {
     STATE.with(|state| {
         let mut state = state.borrow_mut();
         state.pixels = make_pixels(state.resolution);
@@ -176,7 +175,7 @@ pub fn mouse_move(x: f32, y: f32) {
 }
 
 #[wasm_bindgen]
-pub fn sin_draw(c_id: &str) {
+pub fn sin_draw(_c_id: &str) {
 
     STATE.with(|state: &RefCell<STATE>| {
 

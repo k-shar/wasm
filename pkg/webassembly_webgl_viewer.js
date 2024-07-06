@@ -432,18 +432,18 @@ export function init_gl(canvas_id) {
 }
 
 /**
-* @param {number} x
-* @param {number} y
+* @param {number} _x
+* @param {number} _y
 */
-export function mouse_move(x, y) {
-    wasm.mouse_move(x, y);
+export function mouse_move(_x, _y) {
+    wasm.mouse_move(_x, _y);
 }
 
 /**
-* @param {string} c_id
+* @param {string} _c_id
 */
-export function sin_draw(c_id) {
-    const ptr0 = passStringToWasm0(c_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+export function sin_draw(_c_id) {
+    const ptr0 = passStringToWasm0(_c_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
     wasm.sin_draw(ptr0, len0);
 }
