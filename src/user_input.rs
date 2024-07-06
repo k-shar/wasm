@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use rand::{thread_rng, Rng};
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{closure, prelude::*};
 use web_sys::{window, Document, HtmlElement, HtmlInputElement, MouseEvent, WebGlProgram, WebGlRenderingContext, Window};
 use euclid::{self, default, Box2D};
 
@@ -15,6 +15,7 @@ struct STATE {
     rects: Vec<Box2D<f64, f64>>,
     x: f32,
     c: f32,
+    moving: bool,
 }
 
 // Initialize the state
@@ -26,6 +27,7 @@ thread_local! {
         ],
         x: 0.0,
         c: 0.1,
+        moving: false,
     });
 }
 
@@ -33,6 +35,19 @@ thread_local! {
 pub fn user_init() {
     
     let document = window().unwrap().document().unwrap();
+
+    // add moving checkbox
+    let moving_input: HtmlInputElement = document.get_element_by_id("move").unwrap().dyn_into().unwrap();
+    let moving_read = moving_input.clone();
+    let closure: Closure<dyn FnMut()> = Closure::wrap(Box::new(move || {
+        web_sys::console::log_1(&moving_read.checked().into());
+        STATE.with(|state| {
+            let mut state = state.borrow_mut();
+            state.moving = moving_read.checked();
+        });
+    }));
+    moving_input.set_onchange(Some(closure.as_ref().unchecked_ref()));
+    closure.forget();
 
     // add shake slider
     let shake_input: HtmlInputElement = document.get_element_by_id("shake").unwrap().dyn_into().unwrap();
@@ -43,9 +58,7 @@ pub fn user_init() {
             let mut state = state.borrow_mut();
             state.c = shake_read.value().parse::<f32>().unwrap() / 10.0;
         });
-        shake_output.set_inner_html(
-            &("shake: ".to_owned() + &shake_read.value())
-        );
+        shake_output.set_inner_html(&("shake: ".to_owned() + &shake_read.value()));
     }));
     shake_input.set_oninput(Some(closure.as_ref().unchecked_ref()));
     closure.forget();
@@ -59,10 +72,7 @@ pub fn user_init() {
         let mouse_x = -1.0 + 2.0 * (event.client_x() as f64 - bounding_rect.x()) / bounding_rect.width();
         let mouse_y = -1.0 + 2.0 * (event.client_y() as f64 - bounding_rect.y()) / bounding_rect.height();
 
-        // Log mouse position or update state
-        web_sys::console::log_2(&"Mouse position:".into(), &format!("({}, {})", mouse_x, mouse_y).into());
-        
-        // Example: Add a new rectangle at the mouse position
+        // add a new rect at this position
         let new_rect = Box2D::new(
             euclid::point2(mouse_x, -mouse_y), 
             euclid::point2(mouse_x + 0.05, -mouse_y + 0.05)
@@ -103,17 +113,21 @@ fn user_draw(gl: WebGlRenderingContext) {
             let top_left: euclid::Point2D<f64, f64> = euclid::point2(bottom_left.x, top_right.y);
             let bottom_right: euclid::Point2D<f64, f64> = euclid::point2(top_right.x, bottom_left.y);
 
-            let data = vec![
+            let mut data = vec![
                 top_left.x as f32, top_left.y as f32, 1.0, 0.0, 0.0,
                 bottom_left.x as f32, bottom_left.y as f32, 0.0, 1.0, 0.0,
                 bottom_right.x as f32, bottom_right.y as f32, 0.0, 0.0, 1.0,
                 top_right.x as f32, top_right.y as f32, 1.0, 1.0, 1.0,
-            ].iter().map(|x| 
-                *x 
-                + ((state.x + rng.gen_range(0.0..state.c)).sin() / 5.0)
-                * if i % 2 == 0 { 1.0 } else { -1.0 }
-                - 0.1
-            ).collect::<Vec<f32>>();
+            ];
+            
+            if state.moving {
+                data = data.iter().map(|x| 
+                    *x 
+                    + ((state.x + rng.gen_range(0.0..state.c)).sin() / 5.0)
+                    * if i % 2 == 0 { 1.0 } else { -1.0 }
+                    - 0.1
+                ).collect::<Vec<f32>>();
+            }
 
             // fill ARRAY_BUFFER with the vertex data
             gl.buffer_data_with_array_buffer_view(

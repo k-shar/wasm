@@ -215,54 +215,48 @@ function __wbg_adapter_27(arg0, arg1) {
     wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hefa01079700a9b33(arg0, arg1);
 }
 
-/**
-* @param {number} res
-*/
-export function s_update_resolution(res) {
-    wasm.s_update_resolution(res);
+let cachedFloat32Memory0 = null;
+
+function getFloat32Memory0() {
+    if (cachedFloat32Memory0 === null || cachedFloat32Memory0.byteLength === 0) {
+        cachedFloat32Memory0 = new Float32Array(wasm.memory.buffer);
+    }
+    return cachedFloat32Memory0;
 }
 
-/**
-* @param {number} w
-*/
-export function s_update_wavelength(w) {
-    wasm.s_update_wavelength(w);
+function passArrayF32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4, 4) >>> 0;
+    getFloat32Memory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
 }
 
-/**
-* @param {number} x
-* @param {number} y
-*/
-export function s_mouse_move(x, y) {
-    wasm.s_mouse_move(x, y);
+function isLikeNone(x) {
+    return x === undefined || x === null;
 }
-
 /**
 * @param {string} canvas_id
+* @param {Float32Array | undefined} [selected_color]
 * @returns {WebGLRenderingContext}
 */
-export function init_gl(canvas_id) {
-    const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.init_gl(ptr0, len0);
-    return takeObject(ret);
-}
-
-/**
-* @param {number} x
-* @param {number} y
-*/
-export function mouse_move(x, y) {
-    wasm.mouse_move(x, y);
-}
-
-/**
-* @param {string} c_id
-*/
-export function sin_draw(c_id) {
-    const ptr0 = passStringToWasm0(c_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    const len0 = WASM_VECTOR_LEN;
-    wasm.sin_draw(ptr0, len0);
+export function draw_square(canvas_id, selected_color) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        var ptr1 = isLikeNone(selected_color) ? 0 : passArrayF32ToWasm0(selected_color, wasm.__wbindgen_malloc);
+        var len1 = WASM_VECTOR_LEN;
+        wasm.draw_square(retptr, ptr0, len0, ptr1, len1);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
 }
 
 /**
@@ -314,25 +308,6 @@ export function user_init() {
     wasm.user_init();
 }
 
-let cachedFloat32Memory0 = null;
-
-function getFloat32Memory0() {
-    if (cachedFloat32Memory0 === null || cachedFloat32Memory0.byteLength === 0) {
-        cachedFloat32Memory0 = new Float32Array(wasm.memory.buffer);
-    }
-    return cachedFloat32Memory0;
-}
-
-function passArrayF32ToWasm0(arg, malloc) {
-    const ptr = malloc(arg.length * 4, 4) >>> 0;
-    getFloat32Memory0().set(arg, ptr / 4);
-    WASM_VECTOR_LEN = arg.length;
-    return ptr;
-}
-
-function isLikeNone(x) {
-    return x === undefined || x === null;
-}
 /**
 * @param {string} canvas_id
 * @param {Float32Array | undefined} [selected_color]
@@ -388,31 +363,6 @@ export function gradient_draw(canvas_id) {
 }
 
 /**
-* @param {string} canvas_id
-* @param {Float32Array | undefined} [selected_color]
-* @returns {WebGLRenderingContext}
-*/
-export function draw_square(canvas_id, selected_color) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len0 = WASM_VECTOR_LEN;
-        var ptr1 = isLikeNone(selected_color) ? 0 : passArrayF32ToWasm0(selected_color, wasm.__wbindgen_malloc);
-        var len1 = WASM_VECTOR_LEN;
-        wasm.draw_square(retptr, ptr0, len0, ptr1, len1);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
-
-/**
 * @param {boolean} checked
 */
 export function p_update_box(checked) {
@@ -446,6 +396,56 @@ export function point_draw(canvas_id) {
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
+}
+
+/**
+* @param {number} res
+*/
+export function s_update_resolution(res) {
+    wasm.s_update_resolution(res);
+}
+
+/**
+* @param {number} w
+*/
+export function s_update_wavelength(w) {
+    wasm.s_update_wavelength(w);
+}
+
+/**
+* @param {number} x
+* @param {number} y
+*/
+export function s_mouse_move(x, y) {
+    wasm.s_mouse_move(x, y);
+}
+
+/**
+* @param {string} canvas_id
+* @returns {WebGLRenderingContext}
+*/
+export function init_gl(canvas_id) {
+    const ptr0 = passStringToWasm0(canvas_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.init_gl(ptr0, len0);
+    return takeObject(ret);
+}
+
+/**
+* @param {number} x
+* @param {number} y
+*/
+export function mouse_move(x, y) {
+    wasm.mouse_move(x, y);
+}
+
+/**
+* @param {string} c_id
+*/
+export function sin_draw(c_id) {
+    const ptr0 = passStringToWasm0(c_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    wasm.sin_draw(ptr0, len0);
 }
 
 function handleError(f, args) {
@@ -593,6 +593,9 @@ function __wbg_get_imports() {
         const ret = result;
         return ret;
     };
+    imports.wbg.__wbg_setonchange_8f887c27a2d4469d = function(arg0, arg1) {
+        getObject(arg0).onchange = getObject(arg1);
+    };
     imports.wbg.__wbg_setoninput_09bc7250b084f7d9 = function(arg0, arg1) {
         getObject(arg0).oninput = getObject(arg1);
     };
@@ -697,6 +700,10 @@ function __wbg_get_imports() {
         const ret = result;
         return ret;
     };
+    imports.wbg.__wbg_checked_749a34774f2df2e3 = function(arg0) {
+        const ret = getObject(arg0).checked;
+        return ret;
+    };
     imports.wbg.__wbg_value_47fe6384562f52ab = function(arg0, arg1) {
         const ret = getObject(arg1).value;
         const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -706,9 +713,6 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbg_log_5bb5f88f245d7762 = function(arg0) {
         console.log(getObject(arg0));
-    };
-    imports.wbg.__wbg_log_1746d5c75ec89963 = function(arg0, arg1) {
-        console.log(getObject(arg0), getObject(arg1));
     };
     imports.wbg.__wbg_x_c0e76d143979338a = function(arg0) {
         const ret = getObject(arg0).x;
@@ -832,12 +836,12 @@ function __wbg_get_imports() {
         const ret = wasm.memory;
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper204 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 43, __wbg_adapter_24);
+    imports.wbg.__wbindgen_closure_wrapper198 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 44, __wbg_adapter_24);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper206 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 43, __wbg_adapter_27);
+    imports.wbg.__wbindgen_closure_wrapper200 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 44, __wbg_adapter_27);
         return addHeapObject(ret);
     };
 
