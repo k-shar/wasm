@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use rand::{thread_rng, Rng};
 use wasm_bindgen::prelude::*;
-use web_sys::{window, Document, HtmlElement, HtmlInputElement, WebGlProgram, WebGlRenderingContext, Window};
+use web_sys::{window, Document, HtmlElement, HtmlInputElement, MouseEvent, WebGlProgram, WebGlRenderingContext, Window};
 use euclid::{self, default, Box2D};
 
 extern crate js_sys;
@@ -49,6 +49,33 @@ pub fn user_init() {
     }));
     shake_input.set_oninput(Some(closure.as_ref().unchecked_ref()));
     closure.forget();
+
+    // do mouse input stuff
+    let canvas: HtmlElement = document.get_element_by_id("user_input").unwrap().dyn_into().unwrap();
+    let bounding_rect = canvas.get_bounding_client_rect();
+
+    let closure: Closure<dyn FnMut(MouseEvent)> = Closure::wrap(Box::new(move |event: MouseEvent| {
+        
+        let mouse_x = -1.0 + 2.0 * (event.client_x() as f64 - bounding_rect.x()) / bounding_rect.width();
+        let mouse_y = -1.0 + 2.0 * (event.client_y() as f64 - bounding_rect.y()) / bounding_rect.height();
+
+        // Log mouse position or update state
+        web_sys::console::log_2(&"Mouse position:".into(), &format!("({}, {})", mouse_x, mouse_y).into());
+        
+        // Example: Add a new rectangle at the mouse position
+        let new_rect = Box2D::new(
+            euclid::point2(mouse_x, -mouse_y), 
+            euclid::point2(mouse_x + 0.05, -mouse_y + 0.05)
+        );
+        STATE.with(|state| {
+            let mut state = state.borrow_mut();
+            state.rects.push(new_rect);
+        });
+    }));
+
+    canvas.add_event_listener_with_callback("mousedown", closure.as_ref().unchecked_ref()).unwrap();
+
+    closure.forget(); // Keep the closure alive
 
     // start animation loop
     user_draw(default_gl());
