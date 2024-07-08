@@ -18,6 +18,7 @@ struct Draggable {
     rect: Rect<f32, f32>,
     colour: [f32; 3],
     hovered: bool,
+    id: i32,
 }
 
 // define the state
@@ -27,6 +28,7 @@ struct STATE {
     mouse_pos: euclid::Point2D<f32, f32>,
     mouse_down: bool,
     mouse_cursor: Draggable,
+    selected: Option<i32>,
 }
 
 // Initialize the state
@@ -39,21 +41,25 @@ thread_local! {
                         rect: Rect::new(euclid::point2(-0.5, -0.5), euclid::size2(0.1, 0.1)),
                         colour: [1.0, 1.0, 0.0],
                         hovered: false,
+                        id: 1,
                     },
                     Draggable {
                         rect: Rect::new(euclid::point2(0.5, 0.5), euclid::size2(0.1, 0.1)),
                         colour: [0.0, 1.0, 1.0],
                         hovered: false,
+                        id: 2,
                     },
                     Draggable {
                         rect: Rect::new(euclid::point2(-0.5, 0.5), euclid::size2(0.1, 0.1)),
                         colour: [1.0, 0.0, 1.0],
                         hovered: false,
+                        id: 3,
                     },
                     Draggable {
                         rect: Rect::new(euclid::point2(0.5, -0.5), euclid::size2(0.1, 0.1)),
                         colour: [0.0, 1.0, 0.0],
                         hovered: false,
+                        id: 4,
                     },
                 ],
             },
@@ -62,9 +68,11 @@ thread_local! {
             rect: Rect::new(euclid::point2(0.0, 0.0), euclid::size2(0.06, 0.06)),
             colour: [1.0, 0.0, 0.0],
             hovered: false,
+            id: 0,
         },
         mouse_pos: euclid::point2(0.0, 0.0),
         mouse_down: false,
+        selected: None,
     });
 
 }
@@ -97,11 +105,37 @@ pub fn drag_init() {
             state.mouse_cursor.rect.origin = mouse_pos - state.mouse_cursor.rect.size / 2.0;
 
             // check if any draggable is hovered
+            let mut selected = state.selected.clone();
             let mouse_cursor_box = state.mouse_cursor.rect.clone();
+
             for space in state.spaces.iter_mut() {
                 for draggable in space.verticies.iter_mut() {
+                    draggable.hovered = false;
                     // if intersects with mouse_cusor
-                    draggable.hovered = mouse_cursor_box.intersects(&draggable.rect);
+                    if mouse_cursor_box.intersects(&draggable.rect) {
+                        draggable.hovered = true;
+                        if event.buttons() == 1 {
+                            selected = Some(draggable.id);
+                        }
+                    }
+
+                }
+            }
+            
+            if event.buttons() != 1 {
+                selected = None;
+            }
+
+            state.selected = selected;
+
+            // if selected, move the selected draggable
+            if let Some(selected) = state.selected {
+                for space in state.spaces.iter_mut() {
+                    for draggable in space.verticies.iter_mut() {
+                        if draggable.id == selected {
+                            draggable.rect.origin = mouse_pos - draggable.rect.size / 2.0;
+                        }
+                    }
                 }
             }
 
@@ -162,6 +196,7 @@ fn draw_space(gl: WebGlRenderingContext, space: Space) {
             rect: Rect::new(euclid::point2(min_x, min_y), euclid::size2(max_x - min_x, max_y - min_y)),
             colour: [0.3, 0.3, 0.3],
             hovered: false,
+            id: 10,
         }
     );
 
