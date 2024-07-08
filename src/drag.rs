@@ -41,6 +41,12 @@ thread_local! {
                         rect: Rect::new(euclid::point2(-0.5, -0.5), euclid::size2(0.1, 0.1)),
                         colour: [1.0, 1.0, 0.0],
                         hovered: false,
+                        id: 0,
+                    },
+                    Draggable {
+                        rect: Rect::new(euclid::point2(-0.5, 0.5), euclid::size2(0.1, 0.1)),
+                        colour: [1.0, 0.0, 1.0],
+                        hovered: false,
                         id: 1,
                     },
                     Draggable {
@@ -50,16 +56,10 @@ thread_local! {
                         id: 2,
                     },
                     Draggable {
-                        rect: Rect::new(euclid::point2(-0.5, 0.5), euclid::size2(0.1, 0.1)),
-                        colour: [1.0, 0.0, 1.0],
-                        hovered: false,
-                        id: 3,
-                    },
-                    Draggable {
                         rect: Rect::new(euclid::point2(0.5, -0.5), euclid::size2(0.1, 0.1)),
                         colour: [0.0, 1.0, 0.0],
                         hovered: false,
-                        id: 4,
+                        id: 3,
                     },
                 ],
             },
@@ -122,23 +122,30 @@ pub fn drag_init() {
                 }
             }
             
-            if event.buttons() != 1 {
-                selected = None;
-            }
+            if event.buttons() != 1 { selected = None; }
 
             state.selected = selected;
 
-            // if selected, move the selected draggable
+            // if selected
             if let Some(selected) = state.selected {
+                // for each space
                 for space in state.spaces.iter_mut() {
-                    for draggable in space.verticies.iter_mut() {
-                        if draggable.id == selected {
-                            draggable.rect.origin = mouse_pos - draggable.rect.size / 2.0;
-                        }
+
+                    // move selected draggable        
+                    space.verticies[selected as usize].rect.origin = mouse_pos - space.verticies[selected as usize].rect.size / 2.0;
+
+                    // keep other verticies in line
+                    if selected % 2 == 0 {
+                        space.verticies[((selected+3) % 4) as usize].rect.origin.y = space.verticies[selected as usize].rect.origin.y;
+                        space.verticies[((selected+1) % 4) as usize].rect.origin.x = space.verticies[selected as usize].rect.origin.x;
+                    } else {
+                        space.verticies[((selected+3) % 4) as usize].rect.origin.x = space.verticies[selected as usize].rect.origin.x;
+                        space.verticies[((selected+1) % 4) as usize].rect.origin.y = space.verticies[selected as usize].rect.origin.y;
                     }
+
                 }
             }
-
+            
         });
         
 
