@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Three.js Scene with Spotlight and GUI</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    <script>
+        
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Ground setup
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x808080, side: THREE.DoubleSide });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        scene.add(ground);
+
+        // Spotlight setup
+        const spotlight = new THREE.SpotLight(0xffffff);
+        spotlight.position.set(10, 20, 10);
+        spotlight.castShadow = true;
+        scene.add(spotlight);
+
+        const spotlightHelper = new THREE.SpotLightHelper(spotlight);
+        scene.add(spotlightHelper);
+
+        // GUI setup
+        const gui = new dat.GUI();
+        const lightFolder = gui.addFolder('Spotlight');
+        lightFolder.add(spotlight.position, 'x', -50, 50).name('Position X');
+        lightFolder.add(spotlight.position, 'y', 0, 50).name('Position Y');
+        lightFolder.add(spotlight.position, 'z', -50, 50).name('Position Z');
+        lightFolder.add(spotlight, 'intensity', 0, 2).name('Intensity');
+        lightFolder.add(spotlight, 'distance', 0, 100).name('Distance');
+        lightFolder.add(spotlight, 'angle', 0, Math.PI / 3).name('Angle');
+        lightFolder.add(spotlight, 'penumbra', 0, 1).name('Penumbra');
+        lightFolder.add(spotlight, 'decay', 1, 2).name('Decay');
+        lightFolder.open();
+
+        // Orbit controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.screenSpacePanning = false;
+
+        // Camera position
+        camera.position.z = 30;
+        camera.position.y = 15;
+        camera.lookAt(0, 0, 0);
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            spotlightHelper.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Resize handling
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
