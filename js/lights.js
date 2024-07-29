@@ -1,3 +1,6 @@
+
+
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(75, 50, 0);
@@ -44,13 +47,6 @@ scene.add(spotlight.target);
 const spotlightHelper = new THREE.SpotLightHelper(spotlight);
 scene.add(spotlightHelper);
 
-// GUI setup
-const gui = new dat.GUI();
-const lightFolder = gui.addFolder('Spotlight');
-    lightFolder.addColor({ color: 0xffffff }, 'color').onChange((color) => {
-    spotlight.color = new THREE.Color(color);
-});
-lightFolder.open();
 
 // Orbit controls - for moving the camera
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -72,6 +68,16 @@ function updateSpotlightAngle(angle) {
     spotlight.target.position.z = radius * Math.sin(radians) + spotlight.position.z;
     document.getElementById('left_right').value = angle;
 }
+
+// COLOUR
+var colorPicker = new iro.ColorPicker("#picker", {
+    width: 150,
+    color: "#ffffff"
+});
+  
+colorPicker.on(["color:init", "color:change"], function(color){
+  spotlight.color = new THREE.Color(color.hexString);
+});
 
 
 // UP DOWN
