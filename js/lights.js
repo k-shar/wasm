@@ -11,6 +11,14 @@ container.appendChild(renderer.domElement);
 const axesHelper = new THREE.AxesHelper(20);
 scene.add(axesHelper);
 
+// Floor 
+const floor_geo = new THREE.PlaneGeometry(1000, 1000);
+const floor_mat = new THREE.MeshStandardMaterial({ color: 0xF08080, side: THREE.DoubleSide });
+const floor = new THREE.Mesh(floor_geo, floor_mat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -0.1;
+scene.add(floor);
+
 // Ground setup
 const groundGeometry = new THREE.PlaneGeometry(100, 100);
 const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x808080, side: THREE.DoubleSide });
@@ -28,7 +36,7 @@ spotlight.position.set(-50, 50, 50);
 spotlight.distance = 0; // infinite throw
 spotlight.angle = 0.1; // how wide the beam is
 spotlight.penumbra = 0.6;
-spotlight.target.position.set(0, 0, 0);
+spotlight.target.position.set(0, 30, 0);
 scene.add(spotlight);
 scene.add(spotlight.target);
 
@@ -39,11 +47,10 @@ scene.add(spotlightHelper);
 // GUI setup
 const gui = new dat.GUI();
 const lightFolder = gui.addFolder('Spotlight');
-lightFolder.add(spotlight.target.position, 'y', -50, 50).name('up/down');
-lightFolder.add(spotlight, 'intensity', 0, 2).name('Intensity');
-lightFolder.add(spotlight, 'angle', 0.05, 0.3).name('Size');
-lightFolder.add(spotlight, 'penumbra', 0, 1).name('Focus');
-lightFolder.addColor({ color: 0xffffff }, 'color').onChange((color) => {
+    lightFolder.add(spotlight, 'intensity', 0, 5).name('Intensity');
+    lightFolder.add(spotlight, 'angle', 0.05, 0.3).name('Size');
+    lightFolder.add(spotlight, 'penumbra', 0, 1).name('Focus');
+    lightFolder.addColor({ color: 0xffffff }, 'color').onChange((color) => {
     spotlight.color = new THREE.Color(color);
 });
 lightFolder.open();
@@ -53,49 +60,37 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.25;
 controls.screenSpacePanning = false;
+controls.maxPolarAngle = Math.PI / 2;
 
-// Angle slider control
-var angle = 0;
-document.getElementById('slider').addEventListener('input', function(event) {
+// LEFT RIGHT
+var angle = -45;
+document.getElementById('left_right').addEventListener('input', function(event) {
     angle = parseFloat(event.target.value);
     updateSpotlightAngle(angle);
 });
-
 function updateSpotlightAngle(angle) {
     const radians = angle * (Math.PI / 180);
     const radius = 30; 
-    spotlight.target.position.x = radius * Math.cos(radians);
-    spotlight.target.position.z = radius * Math.sin(radians);
-    
-    // log the angel to div
-    document.getElementById('slider').value = angle;
+    spotlight.target.position.x = radius * Math.cos(radians) + spotlight.position.x;
+    spotlight.target.position.z = radius * Math.sin(radians) + spotlight.position.z;
+    document.getElementById('left_right').value = angle;
     document.getElementById('angle_output').innerText = angle;
 }
 
-// Button controls
-const moveAmount = 1; // Amount to move the spotlight target with each press
 
-document.getElementById('up').addEventListener('mousedown', () => moveSpotlight('up'));
-document.getElementById('down').addEventListener('mousedown', () => moveSpotlight('down'));
-document.getElementById('left').addEventListener('mousedown', () => moveSpotlight('left'));
-document.getElementById('right').addEventListener('mousedown', () => moveSpotlight('right'));
+// UP DOWN
+document.getElementById('up_down').addEventListener('input', function(event) {
+    spotlight.target.position.y = parseFloat(event.target.value);
+    document.getElementById('up_down_output').innerText = event.target.value;
+});
 
-function moveSpotlight(direction) {
-    switch(direction) {
-        case 'up':
-            spotlight.target.position.y += moveAmount;
-            break;
-        case 'down':
-            spotlight.target.position.y -= moveAmount;
-            break;
-        case 'left':
-            angle -= moveAmount;
-            break;
-        case 'right':
-            angle += moveAmount;
-            break;
-    }
-}
+
+// movement keypad
+const moveAmount = 1;
+document.getElementById('up').addEventListener('mousedown', () => { spotlight.target.position.y += moveAmount; });
+document.getElementById('down').addEventListener('mousedown', () => { spotlight.target.position.y -= moveAmount; });
+document.getElementById('left').addEventListener('mousedown', () => { angle -= moveAmount; });
+document.getElementById('right').addEventListener('mousedown', () => { angle += moveAmount; });
 
 // Animation loop
 function animate() {
@@ -119,4 +114,4 @@ function setSize() {
 window.addEventListener('resize', () => {
     setSize();
 });
-setSize(); // ensure the initial size is set correctly
+setSize();

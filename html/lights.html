@@ -6,16 +6,24 @@
     <link rel="stylesheet" href="../css/lights.css">
 </head>
 <body>
-    <div id="canvas-container"></div>
 
-    <div class="slider-container">
-        <label for="angle">Angle:</label>
-        <input type="range" id="slider" name="slider" min="-145" max="75" value="0" oninput="document.getElementById('sliderValue').textContent = this.value">
-        <div id="angle_output">Value: <span id="sliderValue">0</span></div>
-    </div>
+    <div id="canvas-container"></div>
 
     <div class="controls">
         
+        <div>
+            <div class="slider-container">
+                <label for="angle">Left/ Right:</label>
+                <input type="range" id="left_right" name="slider" min="-80" max="10">
+                <div id="angle_output"></div>
+            </div>
+            <div class="slider-container">
+                <label for="angle">Up/ Down:</label>
+                <input type="range" id="up_down" min="-10" max="40" value="30">
+                <div id="up_down_output"></div>
+            </div>
+        </div>
+
         <div id="button-container">
             <button id="up">Up</button>
             <div id="middle-row">
@@ -25,11 +33,6 @@
             <button id="down">Down</button>
         </div>
 
-        <div class="color-picker-container">
-            <label for="colorPicker">Color Picker:</label>
-            <input type="color" id="colorPicker" name="colorPicker" value="#ff0000" onchange="document.getElementById('selectedColor').textContent = this.value">
-            <div class="output">Selected Color: <span id="selectedColor">#ff0000</span></div>
-        </div>
 
     </div>
 
