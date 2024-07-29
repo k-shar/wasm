@@ -13,7 +13,7 @@ const colorPicker = createColorPicker();
 // Initialize the scene
 function createCamera() {
     const cam = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    cam.position.set(75, 50, 0);
+    cam.position.set(75, 30, 0);
     cam.lookAt(0, 0, 0);
     return cam;
 }
@@ -88,6 +88,14 @@ function initScene() {
     const cube = addCube();
     setupEventListeners();
 
+    decodeLightsFromURL();
+    // make lights look at their target
+    lights.forEach(light => {
+        const direction = new THREE.Vector3().subVectors(light.spotlight.target.position, light.spotlight.position).normalize();
+        light.box.lookAt(direction.add(light.spotlight.position));
+        light.box.material.color.set(light.spotlight.color);
+    });
+
     // Add DragControls
     const dragControls = new THREE.DragControls([cube], camera, renderer.domElement);
     dragControls.addEventListener('dragstart', function(event) {
@@ -149,46 +157,54 @@ function setupEventListeners() {
         const light = lights[selectedLightIndex];
         const direction = new THREE.Vector3().subVectors(light.spotlight.target.position, light.spotlight.position).normalize();
         light.box.lookAt(direction.add(light.spotlight.position));
+        encodeLightsToURL();
     });
 
     document.getElementById('up_down').addEventListener('input', function(event) {
         const y = parseFloat(event.target.value);
         lights[selectedLightIndex].spotlight.target.position.y = y;
+        const light = lights[selectedLightIndex];
+        const direction = new THREE.Vector3().subVectors(light.spotlight.target.position, light.spotlight.position).normalize();
+        light.box.lookAt(direction.add(light.spotlight.position));
+        encodeLightsToURL();
     });
 
     document.getElementById('intensity').addEventListener('input', function(event) {
         const intensity = parseFloat(event.target.value) / 10;
         lights[selectedLightIndex].spotlight.intensity = intensity;
+        encodeLightsToURL();
     });
 
     document.getElementById('size').addEventListener('input', function(event) {
         const size = parseFloat(event.target.value) / 100;
         lights[selectedLightIndex].spotlight.angle = size;
+        encodeLightsToURL();
     });
 
     document.getElementById('focus').addEventListener('input', function(event) {
         const focus = parseFloat(event.target.value) / 100;
         lights[selectedLightIndex].spotlight.penumbra = focus;
+        encodeLightsToURL();
     });
 
     window.addEventListener('resize', () => setSize());
 }
 
-// Update controls
+// update the controls
 function updateControls() {
     const selectedLight = lights[selectedLightIndex].spotlight;
 
     document.getElementById('intensity').value = selectedLight.intensity * 10;
-    document.getElementById('intensity_value').innerText = selectedLight.intensity * 10;
+    document.getElementById('intensity_value').innerText = Math.round(selectedLight.intensity * 10);
 
     document.getElementById('size').value = selectedLight.angle * 100;
-    document.getElementById('size_value').innerText = selectedLight.angle * 100;
+    document.getElementById('size_value').innerText = Math.round(selectedLight.angle * 100);
 
     document.getElementById('focus').value = selectedLight.penumbra * 100;
-    document.getElementById('focus_value').innerText = selectedLight.penumbra * 100;
+    document.getElementById('focus_value').innerText = Math.round(selectedLight.penumbra * 100);
 
     document.getElementById('up_down').value = selectedLight.target.position.y;
-    document.getElementById('up_down_value').innerText = selectedLight.target.position.y;
+    document.getElementById('up_down_value').innerText = Math.round(selectedLight.target.position.y);
 
     const lightPosition = selectedLight.position;
     const angle = Math.atan2(
@@ -196,8 +212,9 @@ function updateControls() {
         lightPosition.z - selectedLight.target.position.z 
     ) * (180 / Math.PI) + 180;
     document.getElementById('left_right').value = angle;
-    document.getElementById('left_right_value').innerText = angle;
+    document.getElementById('left_right_value').innerText = Math.round(angle);
 }
+
 
 function angle_to_xy(value) {
     const angle = parseFloat(value);
@@ -233,3 +250,53 @@ initScene();
 animate();
 setSize();
 updateControls();
+
+
+
+
+function encodeLightsToURL() {
+    const params = new URLSearchParams();
+    lights.forEach((light, i) => {
+        const { spotlight: sp } = light;
+        params.set(`l${i}_c`, sp.color.getHexString());
+        params.set(`l${i}_i`, sp.intensity.toFixed(2));
+        params.set(`l${i}_a`, sp.angle.toFixed(2));
+        params.set(`l${i}_p`, sp.penumbra.toFixed(2));
+        params.set(`l${i}_ty`, sp.target.position.y.toFixed(2));
+        
+        const dir = new THREE.Vector3().subVectors(sp.target.position, sp.position).normalize();
+        params.set(`l${i}_dx`, dir.x.toFixed(2));
+        params.set(`l${i}_dy`, dir.y.toFixed(2));
+        params.set(`l${i}_dz`, dir.z.toFixed(2));
+    });
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+}
+function decodeLightsFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    lights.forEach((light, i) => {
+        const { spotlight: sp } = light;
+        
+        const color = params.get(`l${i}_c`);
+        if (color) sp.color.set(`#${color}`);
+        
+        const intensity = parseFloat(params.get(`l${i}_i`));
+        if (!isNaN(intensity)) sp.intensity = intensity;
+        
+        const angle = parseFloat(params.get(`l${i}_a`));
+        if (!isNaN(angle)) sp.angle = angle;
+        
+        const penumbra = parseFloat(params.get(`l${i}_p`));
+        if (!isNaN(penumbra)) sp.penumbra = penumbra;
+        
+        const targetY = parseFloat(params.get(`l${i}_ty`));
+        if (!isNaN(targetY)) sp.target.position.y = targetY;
+        
+        const dirX = parseFloat(params.get(`l${i}_dx`));
+        const dirY = parseFloat(params.get(`l${i}_dy`));
+        const dirZ = parseFloat(params.get(`l${i}_dz`));
+        if (!isNaN(dirX) && !isNaN(dirY) && !isNaN(dirZ)) {
+            const dir = new THREE.Vector3(dirX, dirY, dirZ).normalize();
+            sp.target.position.copy(sp.position).add(dir.multiplyScalar(50));
+        }
+    });
+}
