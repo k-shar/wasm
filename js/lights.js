@@ -1,6 +1,4 @@
-
-
-
+// Set up the scene
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(75, 50, 0);
@@ -10,19 +8,26 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 const container = document.getElementById('canvas-container');
 container.appendChild(renderer.domElement);
 
+// Orbit controls - for moving the camera
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.25;
+controls.screenSpacePanning = false;
+controls.maxPolarAngle = Math.PI / 2;
+
 // Axes helper
 const axesHelper = new THREE.AxesHelper(20);
 scene.add(axesHelper);
 
-// Floor 
-const floor_geo = new THREE.PlaneGeometry(1000, 1000);
-const floor_mat = new THREE.MeshStandardMaterial({ color: 0xF08080, side: THREE.DoubleSide });
-const floor = new THREE.Mesh(floor_geo, floor_mat);
+// Floor
+const floorGeo = new THREE.PlaneGeometry(1000, 1000);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0xF08080, side: THREE.DoubleSide });
+const floor = new THREE.Mesh(floorGeo, floorMat);
 floor.rotation.x = -Math.PI / 2;
 floor.position.y = -0.1;
 scene.add(floor);
 
-// Ground setup
+// Ground
 const groundGeometry = new THREE.PlaneGeometry(100, 100);
 const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x808080, side: THREE.DoubleSide });
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
@@ -33,81 +38,107 @@ scene.add(ground);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
-// Spotlight setup
-const spotlight = new THREE.SpotLight(0xffffff);
-spotlight.position.set(-50, 50, 50);
-spotlight.distance = 0; // infinite throw
-spotlight.angle = 0.1; // how wide the beam is
-spotlight.penumbra = 0.6;
-spotlight.target.position.set(0, 30, 0);
-scene.add(spotlight);
-scene.add(spotlight.target);
+// Create multiple spotlights
+const lights = [];
 
-// Spotlight Helper
-const spotlightHelper = new THREE.SpotLightHelper(spotlight);
-scene.add(spotlightHelper);
+for (let i = 0; i < 3; i++) {
+    const spotlight = new THREE.SpotLight(0xffffff);
+    spotlight.position.set(-50 + i * 50, 50, 50);
+    spotlight.distance = 0; // infinite throw
+    spotlight.angle = 0.1; // how wide the beam is
+    spotlight.penumbra = 0.6;
+    spotlight.target.position.set(0, 30, 0);
+    scene.add(spotlight);
+    scene.add(spotlight.target);
 
+    const spotlightHelper = new THREE.SpotLightHelper(spotlight);
+    scene.add(spotlightHelper);
 
-// Orbit controls - for moving the camera
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.25;
-controls.screenSpacePanning = false;
-controls.maxPolarAngle = Math.PI / 2;
+    lights.push({
+        spotlight: spotlight,
+        helper: spotlightHelper
+    });
+}
 
-// LEFT RIGHT
-var angle = -45;
-document.getElementById('left_right').addEventListener('input', function(event) {
-    angle = parseFloat(event.target.value);
-    updateSpotlightAngle(angle);
+// Store the index of the selected light
+let selectedLightIndex = 0;
+
+// Handle light selection
+document.getElementById('light-selector').addEventListener('change', function(event) {
+    selectedLightIndex = parseInt(event.target.value);
+    updateControls();
 });
-function updateSpotlightAngle(angle) {
-    const radians = angle * (Math.PI / 180);
-    const radius = 30; 
-    spotlight.target.position.x = radius * Math.cos(radians) + spotlight.position.x;
-    spotlight.target.position.z = radius * Math.sin(radians) + spotlight.position.z;
+
+// Function to update controls based on the selected light
+function updateControls() {
+    const selectedLight = lights[selectedLightIndex].spotlight;
+    document.getElementById('intensity').value = selectedLight.intensity * 10;
+    document.getElementById('size').value = selectedLight.angle * 100;
+    document.getElementById('focus').value = selectedLight.penumbra * 100;
+    document.getElementById('up_down').value = selectedLight.target.position.y;
+    const lightPosition = lights[selectedLightIndex].spotlight.position;
+    const angle = Math.atan2(lightPosition.z - selectedLight.target.position.z, lightPosition.x - selectedLight.target.position.x) * (180 / Math.PI);
     document.getElementById('left_right').value = angle;
 }
 
-// COLOUR
-var colorPicker = new iro.ColorPicker("#picker", {
-    width: 150,
-    color: "#ffffff"
-});
-  
-colorPicker.on(["color:init", "color:change"], function(color){
-  spotlight.color = new THREE.Color(color.hexString);
-});
+// Initial call to set controls
+updateControls();
 
+// LEFT RIGHT
+document.getElementById('left_right').addEventListener('input', function(event) {
+    const angle = parseFloat(event.target.value);
+    updateLightPosition('left_right', angle);
+});
 
 // UP DOWN
 document.getElementById('up_down').addEventListener('input', function(event) {
-    spotlight.target.position.y = parseFloat(event.target.value);
+    const y = parseFloat(event.target.value);
+    lights[selectedLightIndex].spotlight.target.position.y = y;
 });
 
 // Intensity
 document.getElementById('intensity').addEventListener('input', function(event) {
-    spotlight.intensity = parseFloat(event.target.value) / 10;
+    const intensity = parseFloat(event.target.value) / 10;
+    lights[selectedLightIndex].spotlight.intensity = intensity;
 });
 
-// size
+// Size
 document.getElementById('size').addEventListener('input', function(event) {
-    spotlight.angle = parseFloat(event.target.value) / 100;
+    const size = parseFloat(event.target.value) / 100;
+    lights[selectedLightIndex].spotlight.angle = size;
 });
 
-// focus
+// Focus
 document.getElementById('focus').addEventListener('input', function(event) {
-    spotlight.penumbra = parseFloat(event.target.value) / 100;
+    const focus = parseFloat(event.target.value) / 100;
+    lights[selectedLightIndex].spotlight.penumbra = focus;
 });
 
+// Update light position
+function updateLightPosition(controlId, value) {
+    const angle = parseFloat(value);
+    const radians = angle * (Math.PI / 180);
+    const radius = 30;
+    const light = lights[selectedLightIndex].spotlight;
+    light.target.position.x = radius * Math.cos(radians) + light.position.x;
+    light.target.position.z = radius * Math.sin(radians) + light.position.z;
+}
+
+// Color picker setup
+const colorPicker = new iro.ColorPicker("#picker", {
+    width: 150,
+    color: "#ffffff"
+});
+
+colorPicker.on(["color:init", "color:change"], function(color){
+    lights[selectedLightIndex].spotlight.color = new THREE.Color(color.hexString);
+});
 
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
-    spotlightHelper.update();
-    updateSpotlightAngle(angle);
+    lights.forEach(light => light.helper.update());
     renderer.render(scene, camera);
-    console.log(angle);
 }
 animate();
 
