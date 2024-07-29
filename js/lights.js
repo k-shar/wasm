@@ -2,11 +2,13 @@
 const scene = new THREE.Scene();
 const camera = createCamera();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.shadowMap.enabled = true; // Enable shadow maps in the renderer
 const container = document.getElementById('canvas-container');
 container.appendChild(renderer.domElement);
 const controls = createControls();
 const lights = createLights();
 var selectedLightIndex = 0;
+const colorPicker = createColorPicker();
 
 // Initialize the scene
 function createCamera() {
@@ -25,16 +27,31 @@ function createControls() {
     return ctrl;
 }
 
+
+function createColorPicker() {
+    var colorPicker = new iro.ColorPicker("#picker", {
+        width: 150,
+        color: "#ffffff"
+    });
+    
+    colorPicker.on(["color:init", "color:change"], function(color){
+        lights[selectedLightIndex].spotlight.color.set(new THREE.Color(color.hexString));
+    });
+}
+
 function createLights() {
     const lightsArr = [];
-    
-    for (let i = 0; i < 3; i++) {
+    const numberOfLights = 3;
+    for (let i = 0; i < numberOfLights; i++) {
         const spotlight = new THREE.SpotLight(0xffffff);
-        spotlight.position.set(-50 + i * 50, 50, 50);
+        spotlight.position.set(-50, 50, -50 + i * (100 / (numberOfLights-1)));
+        // spotlight.target.position.set(0, 0, 25 - i * (50 / (numberOfLights-1)));
+        spotlight.target.position.set(0, 0, 0);
         spotlight.distance = 0; // infinite throw
         spotlight.angle = 0.1; // how wide the beam is
-        spotlight.penumbra = 0.6;
-        spotlight.target.position.set(0, 30, 0);
+        spotlight.penumbra = 0.6; // how blurry the beam is
+        spotlight.castShadow = true;
+
         scene.add(spotlight);
         scene.add(spotlight.target);
         
@@ -49,26 +66,42 @@ function createLights() {
 
 // Add initial scene objects
 function initScene() {
-    addAxesHelper();
     addFloor();
     addGround();
     addAmbientLight();
+    const cube = addCube();
     setupEventListeners();
     updateControls();
+
+    // Add DragControls
+    const dragControls = new THREE.DragControls([cube], camera, renderer.domElement);
+    dragControls.addEventListener('dragstart', function(event) {
+        controls.enabled = false;
+    });
+    dragControls.addEventListener('dragend', function(event) {
+        controls.enabled = true;
+    });
+
 }
 
-// Add scene elements
-function addAxesHelper() {
-    const axesHelper = new THREE.AxesHelper(20);
-    scene.add(axesHelper);
+function addCube() {
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshStandardMaterial({ color: 0xf00ff0 });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.scale.set(5, 15, 7);
+    cube.position.set(25, 5, 0);
+    cube.castShadow = true;
+    scene.add(cube);
+    return cube;
 }
 
 function addFloor() {
     const floorGeo = new THREE.PlaneGeometry(1000, 1000);
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0xF08080, side: THREE.DoubleSide });
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x80F080, side: THREE.DoubleSide });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.1;
+    floor.receiveShadow = true;
     scene.add(floor);
 }
 
@@ -77,6 +110,7 @@ function addGround() {
     const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x808080, side: THREE.DoubleSide });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
     scene.add(ground);
 }
 
@@ -88,6 +122,7 @@ function addAmbientLight() {
 // Event listeners
 function setupEventListeners() {
     
+
     document.getElementById('light-selector').addEventListener('change', function(event) {
         selectedLightIndex = parseInt(event.target.value);
         updateControls();
@@ -95,7 +130,7 @@ function setupEventListeners() {
 
     document.getElementById('left_right').addEventListener('input', function(event) {
         const angle = parseFloat(event.target.value);
-        updateLightPosition('left_right', angle);
+        angle_to_xy(angle);
     });
 
     document.getElementById('up_down').addEventListener('input', function(event) {
@@ -129,11 +164,13 @@ function updateControls() {
     document.getElementById('focus').value = selectedLight.penumbra * 100;
     document.getElementById('up_down').value = selectedLight.target.position.y;
     const lightPosition = selectedLight.position;
-    const angle = Math.atan2(lightPosition.z - selectedLight.target.position.z, lightPosition.x - selectedLight.target.position.x) * (180 / Math.PI);
+    const angle = Math.atan2(lightPosition.z - selectedLight.target.position.z, lightPosition.x - selectedLight.target.position.x) * (180 / Math.PI) + 180;
+    console.log(angle);
     document.getElementById('left_right').value = angle;
+    // document.getElementById('lef').innerText = angle;
 }
 
-function updateLightPosition(controlId, value) {
+function angle_to_xy(value) {
     const angle = parseFloat(value);
     const radians = angle * (Math.PI / 180);
     const radius = 30;
@@ -146,8 +183,11 @@ function updateLightPosition(controlId, value) {
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
-    lights.forEach(light => light.helper.update());
     renderer.render(scene, camera);
+    lights.forEach(light => light.helper.update());
+    if (document.getElementById('help_lines').checked) {
+        
+    }
 }
 
 function setSize() {
@@ -162,3 +202,4 @@ function setSize() {
 initScene();
 animate();
 setSize();
+updateControls();

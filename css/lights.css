@@ -1,4 +1,3 @@
-
 .slider-container {
     display: flex;
     align-items: center;
@@ -9,6 +8,12 @@
     width: 100px;
     margin-right: 10px;
     text-align: right;
+}
+
+.slider-container span {
+    width: 100px;
+    margin-left: 10px;
+    text-align: left;
 }
 
 .slider-container input[type="range"] {

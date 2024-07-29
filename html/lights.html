@@ -13,38 +13,51 @@
 
     <div class="controls">
         
+        <div id="light-selector">
+            <input type="radio" id="light1" name="light" value="0">
+            <label for="light1">Light 1</label><br>
+            <input type="radio" id="light2" name="light" value="1">
+            <label for="light2">Light 2</label><br>
+            <input type="radio" id="light3" name="light" value="2">
+            <label for="light3">Light 3</label>
+        </div>
+        
         <div>
             <div class="slider-container">
-                <label for="angle">Left/ Right:</label>
-                <input type="range" id="left_right" name="slider" min="-80" max="10">
+                <label for="left_right">Left/ Right:</label>
+                <input type="range" id="left_right" name="slider" min="-180" max="180" oninput="document.getElementById('left_right_value').textContent = this.value">
+                <span id="left_right_value">0</span>
             </div>
             <div class="slider-container">
-                <label for="angle">Up/ Down:</label>
-                <input type="range" id="up_down" min="-10" max="40" value="30">
+                <label for="up_down">Up/ Down:</label>
+                <input type="range" id="up_down" min="-10" max="40" oninput="document.getElementById('up_down_value').textContent = this.value">
+                <span id="up_down_value">15</span>
             </div>
             <div class="slider-container">
                 <label for="intensity">Intensity:</label>
-                <input type="range" id="intensity" min="0" max="30" value="10">
+                <input type="range" id="intensity" min="0" max="30" oninput="document.getElementById('intensity_value').textContent = this.value">
+                <span id="intensity_value">15</span>
             </div>
             <div class="slider-container">
                 <label for="size">Size:</label>
-                <input type="range" id="size" min="5" max="30" value="10">
+                <input type="range" id="size" min="5" max="30" oninput="document.getElementById('size_value').textContent = this.value">
+                <span id="size_value">17</span>
             </div>
             <div class="slider-container">
                 <label for="focus">Focus:</label>
-                <input type="range" id="focus" min="0" max="100" value="30">
+                <input type="range" id="focus" min="0" max="100" oninput="document.getElementById('focus_value').textContent = this.value">
+                <span id="focus_value">50</span>
             </div>
         </div>
-
         
         <div id="picker"></div>
         
-        <select id="light-selector">
-            <option value="0">Light 1</option>
-            <option value="1">Light 2</option>
-            <option value="2">Light 3</option>
-        </select>
-
+        <div>
+            <label for="help_lines">
+                <input type="checkbox" id="help_lines">
+                Show guide lines
+            </label>
+        </div>
 
     </div>
 
