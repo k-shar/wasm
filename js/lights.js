@@ -58,13 +58,9 @@ controls.screenSpacePanning = false;
 document.getElementById('slider').addEventListener('input', function(event) {
     const angle = event.target.value;
     const radians = angle * (Math.PI / 180);
-
-    // Calculate the x and y positions
-    const radius = 30; // Assuming a unit circle for simplicity
-    const x = radius * Math.cos(radians);
-    const y = radius * Math.sin(radians);
-
-    spotlight.target.position.set(x, 0, y);
+    const radius = 30; 
+    spotlight.target.position.x = radius * Math.cos(radians);
+    spotlight.target.position.z = radius * Math.sin(radians);
 });
 
 // Button controls
