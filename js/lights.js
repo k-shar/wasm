@@ -45,8 +45,9 @@ function createLights() {
     for (let i = 0; i < numberOfLights; i++) {
         const spotlight = new THREE.SpotLight(0xffffff);
         spotlight.position.set(-50, 50, -50 + i * (100 / (numberOfLights-1)));
+        spotlight.target.position.set(0, 0, -50 + i * (100 / (numberOfLights-1)));
         // spotlight.target.position.set(0, 0, 25 - i * (50 / (numberOfLights-1)));
-        spotlight.target.position.set(0, 0, 0);
+        // spotlight.target.position.set(0, 0, 0);
         spotlight.distance = 0; // infinite throw
         spotlight.angle = 0.1; // how wide the beam is
         spotlight.penumbra = 0.6; // how blurry the beam is
@@ -71,7 +72,6 @@ function initScene() {
     addAmbientLight();
     const cube = addCube();
     setupEventListeners();
-    updateControls();
 
     // Add DragControls
     const dragControls = new THREE.DragControls([cube], camera, renderer.domElement);
@@ -96,7 +96,7 @@ function addCube() {
 }
 
 function addFloor() {
-    const floorGeo = new THREE.PlaneGeometry(1000, 1000);
+    const floorGeo = new THREE.PlaneGeometry(10000, 10000);
     const floorMat = new THREE.MeshStandardMaterial({ color: 0x80F080, side: THREE.DoubleSide });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
@@ -159,34 +159,45 @@ function setupEventListeners() {
 // Update controls
 function updateControls() {
     const selectedLight = lights[selectedLightIndex].spotlight;
+
     document.getElementById('intensity').value = selectedLight.intensity * 10;
+    document.getElementById('intensity_value').innerText = selectedLight.intensity * 10;
+
     document.getElementById('size').value = selectedLight.angle * 100;
+    document.getElementById('size_value').innerText = selectedLight.angle * 100;
+
     document.getElementById('focus').value = selectedLight.penumbra * 100;
+    document.getElementById('focus_value').innerText = selectedLight.penumbra * 100;
+
     document.getElementById('up_down').value = selectedLight.target.position.y;
+    document.getElementById('up_down_value').innerText = selectedLight.target.position.y;
+
     const lightPosition = selectedLight.position;
-    const angle = Math.atan2(lightPosition.z - selectedLight.target.position.z, lightPosition.x - selectedLight.target.position.x) * (180 / Math.PI) + 180;
-    console.log(angle);
+    const angle = Math.atan2(
+        lightPosition.x - selectedLight.target.position.x,
+        lightPosition.z - selectedLight.target.position.z 
+    ) * (180 / Math.PI) + 180;
     document.getElementById('left_right').value = angle;
-    // document.getElementById('lef').innerText = angle;
+    document.getElementById('left_right_value').innerText = angle;
 }
 
 function angle_to_xy(value) {
     const angle = parseFloat(value);
     const radians = angle * (Math.PI / 180);
-    const radius = 30;
+    const radius = 50;
     const light = lights[selectedLightIndex].spotlight;
-    light.target.position.x = radius * Math.cos(radians) + light.position.x;
-    light.target.position.z = radius * Math.sin(radians) + light.position.z;
+    light.target.position.x = radius * Math.sin(radians) + light.position.x;
+    light.target.position.z = radius * Math.cos(radians) + light.position.z;
 }
 
-
-// Animation loop
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
     lights.forEach(light => light.helper.update());
     if (document.getElementById('help_lines').checked) {
-        
+        lights.forEach(light => scene.add(light.helper));
+    } else {
+        scene.children = scene.children.filter(child => !(child instanceof THREE.SpotLightHelper));
     }
 }
 
