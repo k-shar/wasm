@@ -36,30 +36,45 @@ function createColorPicker() {
     
     colorPicker.on(["color:init", "color:change"], function(color){
         lights[selectedLightIndex].spotlight.color.set(new THREE.Color(color.hexString));
+        lights[selectedLightIndex].box.material.color.set(new THREE.Color(colorPicker.color.hexString));
     });
+
 }
 
 function createLights() {
+    
     const lightsArr = [];
     const numberOfLights = 3;
+
     for (let i = 0; i < numberOfLights; i++) {
+
         const spotlight = new THREE.SpotLight(0xffffff);
         spotlight.position.set(-50, 50, -50 + i * (100 / (numberOfLights-1)));
         spotlight.target.position.set(0, 0, -50 + i * (100 / (numberOfLights-1)));
-        // spotlight.target.position.set(0, 0, 25 - i * (50 / (numberOfLights-1)));
-        // spotlight.target.position.set(0, 0, 0);
         spotlight.distance = 0; // infinite throw
         spotlight.angle = 0.1; // how wide the beam is
         spotlight.penumbra = 0.6; // how blurry the beam is
         spotlight.castShadow = true;
 
+        // Create a box to represent the spotlight
+        const boxGeometry = new THREE.BoxGeometry(5, 5, 15);
+        const boxMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const spotlightBox = new THREE.Mesh(boxGeometry, boxMaterial);
+        spotlightBox.position.copy(spotlight.position);
+        spotlightBox.visible = true;
+        const direction = new THREE.Vector3().subVectors(spotlight.target.position, spotlight.position).normalize();
+        spotlightBox.lookAt(direction.add(spotlight.position));
+
+        // spot beams
+        const spotlightHelper = new THREE.SpotLightHelper(spotlight);
+
+        scene.add(spotlightBox);
         scene.add(spotlight);
         scene.add(spotlight.target);
-        
-        const spotlightHelper = new THREE.SpotLightHelper(spotlight);
         scene.add(spotlightHelper);
         
-        lightsArr.push({ spotlight, helper: spotlightHelper });
+        lightsArr.push({ spotlight, helper: spotlightHelper, box: spotlightBox });
+        
     }
 
     return lightsArr;
@@ -131,6 +146,9 @@ function setupEventListeners() {
     document.getElementById('left_right').addEventListener('input', function(event) {
         const angle = parseFloat(event.target.value);
         angle_to_xy(angle);
+        const light = lights[selectedLightIndex];
+        const direction = new THREE.Vector3().subVectors(light.spotlight.target.position, light.spotlight.position).normalize();
+        light.box.lookAt(direction.add(light.spotlight.position));
     });
 
     document.getElementById('up_down').addEventListener('input', function(event) {
@@ -199,6 +217,7 @@ function animate() {
     } else {
         scene.children = scene.children.filter(child => !(child instanceof THREE.SpotLightHelper));
     }
+
 }
 
 function setSize() {
