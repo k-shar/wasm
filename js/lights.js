@@ -1,6 +1,6 @@
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(100, 75, 0);
+camera.position.set(75, 50, 0);
 camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -47,9 +47,6 @@ scene.add(spotlightHelper);
 // GUI setup
 const gui = new dat.GUI();
 const lightFolder = gui.addFolder('Spotlight');
-    lightFolder.add(spotlight, 'intensity', 0, 5).name('Intensity');
-    lightFolder.add(spotlight, 'angle', 0.05, 0.3).name('Size');
-    lightFolder.add(spotlight, 'penumbra', 0, 1).name('Focus');
     lightFolder.addColor({ color: 0xffffff }, 'color').onChange((color) => {
     spotlight.color = new THREE.Color(color);
 });
@@ -74,16 +71,28 @@ function updateSpotlightAngle(angle) {
     spotlight.target.position.x = radius * Math.cos(radians) + spotlight.position.x;
     spotlight.target.position.z = radius * Math.sin(radians) + spotlight.position.z;
     document.getElementById('left_right').value = angle;
-    document.getElementById('angle_output').innerText = angle;
 }
 
 
 // UP DOWN
 document.getElementById('up_down').addEventListener('input', function(event) {
     spotlight.target.position.y = parseFloat(event.target.value);
-    document.getElementById('up_down_output').innerText = event.target.value;
 });
 
+// Intensity
+document.getElementById('intensity').addEventListener('input', function(event) {
+    spotlight.intensity = parseFloat(event.target.value) / 10;
+});
+
+// size
+document.getElementById('size').addEventListener('input', function(event) {
+    spotlight.angle = parseFloat(event.target.value) / 100;
+});
+
+// focus
+document.getElementById('focus').addEventListener('input', function(event) {
+    spotlight.penumbra = parseFloat(event.target.value) / 100;
+});
 
 // movement keypad
 const moveAmount = 1;

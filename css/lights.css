@@ -1,3 +1,19 @@
+.slider-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.slider-container label {
+    width: 100px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+.slider-container input[type="range"] {
+    flex: 1;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -13,8 +29,8 @@ body {
     display: flex;
 }
 #canvas-container {
-    width: 80vw;
-    height: 80vh;
+    width: 90vw;
+    height: 75vh;
     display: flex;
     justify-content: center;
     align-items: center;
