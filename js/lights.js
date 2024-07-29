@@ -55,13 +55,22 @@ controls.dampingFactor = 0.25;
 controls.screenSpacePanning = false;
 
 // Angle slider control
+var angle = 0;
 document.getElementById('slider').addEventListener('input', function(event) {
-    const angle = event.target.value;
+    angle = parseFloat(event.target.value);
+    updateSpotlightAngle(angle);
+});
+
+function updateSpotlightAngle(angle) {
     const radians = angle * (Math.PI / 180);
     const radius = 30; 
     spotlight.target.position.x = radius * Math.cos(radians);
     spotlight.target.position.z = radius * Math.sin(radians);
-});
+    
+    // log the angel to div
+    document.getElementById('slider').value = angle;
+    document.getElementById('angle_output').innerText = angle;
+}
 
 // Button controls
 const moveAmount = 1; // Amount to move the spotlight target with each press
@@ -80,10 +89,10 @@ function moveSpotlight(direction) {
             spotlight.target.position.y -= moveAmount;
             break;
         case 'left':
-            spotlight.target.position.x -= moveAmount;
+            angle -= moveAmount;
             break;
         case 'right':
-            spotlight.target.position.x += moveAmount;
+            angle += moveAmount;
             break;
     }
 }
@@ -92,7 +101,9 @@ function moveSpotlight(direction) {
 function animate() {
     requestAnimationFrame(animate);
     spotlightHelper.update();
+    updateSpotlightAngle(angle);
     renderer.render(scene, camera);
+    console.log(angle);
 }
 animate();
 

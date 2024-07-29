@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>lights !</title>
-    <link rel="stylesheet" href="/css/lights.css">
+    <link rel="stylesheet" href="../css/lights.css">
 </head>
 <body>
     <div id="canvas-container"></div>
@@ -11,7 +11,7 @@
     <div class="slider-container">
         <label for="angle">Angle:</label>
         <input type="range" id="slider" name="slider" min="-145" max="75" value="0" oninput="document.getElementById('sliderValue').textContent = this.value">
-        <div class="output">Value: <span id="sliderValue">0</span></div>
+        <div id="angle_output">Value: <span id="sliderValue">0</span></div>
     </div>
 
     <div class="controls">
@@ -37,6 +37,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
-    <script src="/js/lights.js"></script>
+    <script src="../js/lights.js"></script>
 </body>
 </html>
