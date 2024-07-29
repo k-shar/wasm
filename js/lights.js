@@ -79,6 +79,28 @@ colorPicker.on(["color:init", "color:change"], function(color){
   spotlight.color = new THREE.Color(color.hexString);
 });
 
+
+// UP DOWN
+document.getElementById('up_down').addEventListener('input', function(event) {
+    spotlight.target.position.y = parseFloat(event.target.value);
+});
+
+// Intensity
+document.getElementById('intensity').addEventListener('input', function(event) {
+    spotlight.intensity = parseFloat(event.target.value) / 10;
+});
+
+// size
+document.getElementById('size').addEventListener('input', function(event) {
+    spotlight.angle = parseFloat(event.target.value) / 100;
+});
+
+// focus
+document.getElementById('focus').addEventListener('input', function(event) {
+    spotlight.penumbra = parseFloat(event.target.value) / 100;
+});
+
+
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
